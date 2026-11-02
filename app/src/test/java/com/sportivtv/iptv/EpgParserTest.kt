@@ -4,6 +4,7 @@ import com.sportivtv.iptv.model.EpgProgram
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -40,7 +41,7 @@ class EpgParserTest {
         assertEquals("Live Match: Team A vs Team B", programs[0].title)
         assertEquals("Football league match", programs[0].description)
         assertEquals("Sports", programs[0].category)
-        assertEquals(0L, programs[0].startTime) // Date may vary; just check structure
+        assertTrue(programs[0].startTime > 0L) // XMLTV start date must parse to a valid timestamp
     }
 
     @Test
