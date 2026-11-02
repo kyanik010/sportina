@@ -53,16 +53,67 @@
             android:visibility="gone"
             android:indeterminateTint="@color/sportiv_gold" />
 
-        <TextView
-            android:id="@+id/empty_state_text"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/empty_state_panel"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@color/text_secondary_dark"
-            android:textSize="@dimen/text_md"
-            android:visibility="gone"
+            android:layout_margin="@dimen/spacing_lg"
+            android:orientation="vertical"
             android:gravity="center"
-            android:padding="@dimen/spacing_lg" />
+            android:background="@drawable/bg_welcome_panel"
+            android:padding="@dimen/spacing_xl"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_nav_subscriptions"
+                android:contentDescription="@string/welcome_add_subscription"
+                android:tint="@color/sportiv_gold"
+                android:layout_marginBottom="@dimen/spacing_md" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_title"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="@dimen/text_xxl"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/spacing_sm" />
+
+            <TextView
+                android:id="@+id/empty_state_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_empty_description"
+                android:textColor="@color/text_secondary_dark"
+                android:textSize="@dimen/text_md"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="@dimen/spacing_lg" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/empty_state_action"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="@string/welcome_add_subscription"
+                android:textStyle="bold"
+                android:textColor="@color/background_dark"
+                android:backgroundTint="@color/sportiv_gold"
+                app:cornerRadius="16dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_supported_formats"
+                android:textColor="@color/text_hint_dark"
+                android:textSize="@dimen/text_xs"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/spacing_md" />
+        </LinearLayout>
     </FrameLayout>
 
     <!-- Bottom navigation -->
