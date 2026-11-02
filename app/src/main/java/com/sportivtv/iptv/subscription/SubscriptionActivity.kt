@@ -1,6 +1,7 @@
 package com.sportivtv.iptv.subscription
 
 import android.os.Bundle
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -86,7 +87,26 @@ class SubscriptionActivity : AppCompatActivity() {
         val username = usernameEdit.text.toString().trim().takeIf { it.isNotBlank() }
         val password = passwordEdit.text.toString().takeIf { it.isNotBlank() }
 
-        subscriptionManager.addSubscription(name, url, epgUrl, username, password)
+        if ((username == null) != (password == null)) {
+            usernameEdit.error = getString(R.string.sub_credentials_both_required)
+            passwordEdit.error = getString(R.string.sub_credentials_both_required)
+            return
+        }
+
+        // Xtream Codes providers accept a server URL plus username/password.
+        // Convert that input to the M3U endpoint consumed by the existing parser.
+        val playlistUrl = if (username != null && password != null &&
+            !url.contains("get.php", ignoreCase = true)) {
+            Uri.parse(url.trimEnd('/') + "/get.php")
+                .buildUpon()
+                .appendQueryParameter("username", username)
+                .appendQueryParameter("password", password)
+                .appendQueryParameter("type", "m3u_plus")
+                .appendQueryParameter("output", "ts")
+                .build().toString()
+        } else url
+
+        subscriptionManager.addSubscription(name, playlistUrl, epgUrl, username, password)
 
         // Clear form
         nameEdit.text.clear()
