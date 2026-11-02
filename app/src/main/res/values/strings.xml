@@ -40,6 +40,7 @@
     <string name="sub_epg_url">EPG URL (XMLTV)</string>
     <string name="sub_username">Username (optional)</string>
     <string name="sub_password">Password (optional)</string>
+    <string name="sub_credentials_both_required">Enter both username and password for Xtream Codes login.</string>
     <string name="sub_save">Save</string>
     <string name="sub_delete">Delete</string>
     <string name="sub_test">Test</string>
