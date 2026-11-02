@@ -45,6 +45,7 @@
     <string name="sub_epg_url">رابط دليل البرامج (XMLTV)</string>
     <string name="sub_username">اسم المستخدم (اختياري)</string>
     <string name="sub_password">كلمة المرور (اختياري)</string>
+    <string name="sub_credentials_both_required">أدخل اسم المستخدم وكلمة المرور معًا لتسجيل الدخول عبر Xtream Codes.</string>
     <string name="sub_save">حفظ</string>
     <string name="sub_delete">حذف</string>
     <string name="sub_test">اختبار</string>
