@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App identity -->
+    <string name="app_name">SportivTV</string>
+
+    <!-- Navigation -->
+    <string name="nav_channels">القنوات</string>
+    <string name="nav_favorites">المفضلة</string>
+    <string name="nav_search">بحث</string>
+    <string name="nav_subscriptions">الاشتراكات</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="nav_epg">دليل البرامج</string>
+
+    <!-- Categories -->
+    <string name="category_all">الكل</string>
+    <string name="category_sports">رياضة</string>
+    <string name="category_movies">أفلام</string>
+    <string name="category_news">أخبار</string>
+    <string name="category_entertainment">ترفيه</string>
+    <string name="category_kids">أطفال</string>
+    <string name="category_documentary">وثائقي</string>
+    <string name="category_music">موسيقى</string>
+    <string name="category_arabic">عربي</string>
+    <string name="category_international">دولي</string>
+
+    <!-- Player -->
+    <string name="player_play">تشغيل</string>
+    <string name="player_pause">إيقاف مؤقت</string>
+    <string name="player_channels_list">قائمة القنوات</string>
+    <string name="player_next_channel">القناة التالية</string>
+    <string name="player_prev_channel">القناة السابقة</string>
+    <string name="player_audio_sync">مزامنة الصوت</string>
+    <string name="player_audio_offset">إزاحة الصوت (مللي ثانية)</string>
+    <string name="player_reconnect">إعادة الاتصال</string>
+    <string name="player_loading">جاري التحميل…</string>
+    <string name="player_error">خطأ في التشغيل</string>
+    <string name="player_error_reconnect">تعذر تشغيل القناة. جاري إعادة المحاولة…</string>
+    <string name="player_quality">جودة البث</string>
+    <string name="player_ratio">نسبة العرض</string>
+
+    <!-- Subscriptions -->
+    <string name="sub_add">إضافة اشتراك</string>
+    <string name="sub_name">اسم الاشتراك</string>
+    <string name="sub_url">رابط قائمة التشغيل (M3U/M3U8)</string>
+    <string name="sub_epg_url">رابط دليل البرامج (XMLTV)</string>
+    <string name="sub_username">اسم المستخدم (اختياري)</string>
+    <string name="sub_password">كلمة المرور (اختياري)</string>
+    <string name="sub_save">حفظ</string>
+    <string name="sub_delete">حذف</string>
+    <string name="sub_test">اختبار</string>
+    <string name="sub_active">نشط</string>
+    <string name="sub_inactive">غير نشط</string>
+    <string name="sub_test_success">تم الاتصال بنجاح</string>
+    <string name="sub_test_fail">فشل الاتصال</string>
+    <string name="sub_loading">جاري تحميل القنوات…</string>
+    <string name="sub_channels_loaded">تم تحميل %1$d قناة</string>
+    <string name="sub_no_subscriptions">لا توجد اشتراكات. أضف اشتراكًا للبدء.</string>
+
+    <!-- Search -->
+    <string name="search_hint">ابحث عن قناة…</string>
+    <string name="search_no_results">لا توجد نتائج</string>
+
+    <!-- Favorites -->
+    <string name="fav_add">إضافة إلى المفضلة</string>
+    <string name="fav_remove">إزالة من المفضلة</string>
+    <string name="fav_empty">لا توجد قنوات مفضلة</string>
+
+    <!-- EPG -->
+    <string name="epg_now">الآن</string>
+    <string name="epg_next">التالي</string>
+    <string name="epg_no_data">لا تتوفر بيانات دليل البرامج</string>
+    <string name="epg_loading">جاري تحميل دليل البرامج…</string>
+
+    <!-- Settings -->
+    <string name="settings_player">إعدادات المشغل</string>
+    <string name="settings_audio">إعدادات الصوت</string>
+    <string name="settings_video">إعدادات الفيديو</string>
+    <string name="settings_interface">إعدادات الواجهة</string>
+    <string name="settings_about">حول التطبيق</string>
+    <string name="settings_developer">خيارات المطور</string>
+    <string name="settings_hw_accel">تسريع الأجهزة</string>
+    <string name="settings_buffer_size">حجم الذاكرة المؤقتة</string>
+    <string name="settings_auto_reconnect">إعادة الاتصال التلقائي</string>
+    <string name="settings_external_audio">الصوت الخارجي التجريبي</string>
+    <string name="settings_audio_offset_default">إزاحة الصوت الافتراضية</string>
+    <string name="settings_theme">السمة</string>
+    <string name="settings_language">اللغة</string>
+    <string name="settings_clear_cache">مسح الذاكرة المؤقتة</string>
+
+    <!-- Errors -->
+    <string name="error_no_internet">لا يوجد اتصال بالإنترنت</string>
+    <string name="error_stream_failed">فشل تحميل البث</string>
+    <string name="error_invalid_url">رابط غير صالح</string>
+    <string name="error_empty_playlist">قائمة تشغيل فارغة</string>
+    <string name="error_network">خطأ في الشبكة</string>
+    <string name="error_unknown">خطأ غير معروف</string>
+
+    <!-- General -->
+    <string name="ok">موافق</string>
+    <string name="cancel">إلغاء</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="loading">جاري التحميل…</string>
+    <string name="empty">فارغ</string>
+    <string name="version">الإصدار %1$s</string>
+
+    <!-- About -->
+    <string name="about_description">تطبيق IPTV رياضي عربي فاخر لـ Android TV والهواتف</string>
+    <string name="about_version">الإصدار: %1$s</string>
+    <string name="about_arch">المعمارية: ARM64</string>
+
+    <!-- TV-specific -->
+    <string name="tv_settings">إعدادات TV</string>
+    <string name="tv_dpad_hint">استخدم أزرار الاتجاهات للتنقل</string>
+</resources>

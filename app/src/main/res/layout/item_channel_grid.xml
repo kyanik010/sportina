@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_sm"
+    android:background="@color/card_dark"
+    android:layout_margin="@dimen/spacing_xs">
+
+    <ImageView
+        android:id="@+id/grid_channel_logo"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/channel_card_height"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_channel_placeholder"
+        android:background="@color/background_dark"
+        android:padding="@dimen/spacing_sm" />
+
+    <TextView
+        android:id="@+id/grid_channel_name"
+        style="@style/ChannelCardTitle"
+        android:padding="@dimen/spacing_xs" />
+
+    <TextView
+        android:id="@+id/grid_channel_category"
+        style="@style/ChannelCardCategory"
+        android:paddingStart="@dimen/spacing_xs"
+        android:paddingBottom="@dimen/spacing_xs" />
+
+</LinearLayout>

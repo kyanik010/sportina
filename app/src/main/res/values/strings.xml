@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SportivTV</string>
+
+    <string name="nav_channels">Channels</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_subscriptions">Subscriptions</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_epg">TV Guide</string>
+
+    <string name="category_all">All</string>
+    <string name="category_sports">Sports</string>
+    <string name="category_movies">Movies</string>
+    <string name="category_news">News</string>
+    <string name="category_entertainment">Entertainment</string>
+    <string name="category_kids">Kids</string>
+    <string name="category_documentary">Documentary</string>
+    <string name="category_music">Music</string>
+    <string name="category_arabic">Arabic</string>
+    <string name="category_international">International</string>
+
+    <string name="player_play">Play</string>
+    <string name="player_pause">Pause</string>
+    <string name="player_channels_list">Channel List</string>
+    <string name="player_next_channel">Next Channel</string>
+    <string name="player_prev_channel">Previous Channel</string>
+    <string name="player_audio_sync">Audio Sync</string>
+    <string name="player_audio_offset">Audio Offset (ms)</string>
+    <string name="player_reconnect">Reconnect</string>
+    <string name="player_loading">Loading…</string>
+    <string name="player_error">Playback Error</string>
+    <string name="player_error_reconnect">Cannot play channel. Retrying…</string>
+    <string name="player_quality">Stream Quality</string>
+    <string name="player_ratio">Aspect Ratio</string>
+
+    <string name="sub_add">Add Subscription</string>
+    <string name="sub_name">Subscription Name</string>
+    <string name="sub_url">Playlist URL (M3U/M3U8)</string>
+    <string name="sub_epg_url">EPG URL (XMLTV)</string>
+    <string name="sub_username">Username (optional)</string>
+    <string name="sub_password">Password (optional)</string>
+    <string name="sub_save">Save</string>
+    <string name="sub_delete">Delete</string>
+    <string name="sub_test">Test</string>
+    <string name="sub_active">Active</string>
+    <string name="sub_inactive">Inactive</string>
+    <string name="sub_test_success">Connection successful</string>
+    <string name="sub_test_fail">Connection failed</string>
+    <string name="sub_loading">Loading channels…</string>
+    <string name="sub_channels_loaded">Loaded %1$d channels</string>
+    <string name="sub_no_subscriptions">No subscriptions. Add one to get started.</string>
+
+    <string name="search_hint">Search channels…</string>
+    <string name="search_no_results">No results</string>
+
+    <string name="fav_add">Add to Favorites</string>
+    <string name="fav_remove">Remove from Favorites</string>
+    <string name="fav_empty">No favorite channels</string>
+
+    <string name="epg_now">Now</string>
+    <string name="epg_next">Next</string>
+    <string name="epg_no_data">No EPG data available</string>
+    <string name="epg_loading">Loading TV guide…</string>
+
+    <string name="settings_player">Player Settings</string>
+    <string name="settings_audio">Audio Settings</string>
+    <string name="settings_video">Video Settings</string>
+    <string name="settings_interface">Interface Settings</string>
+    <string name="settings_about">About</string>
+    <string name="settings_developer">Developer Options</string>
+    <string name="settings_hw_accel">Hardware Acceleration</string>
+    <string name="settings_buffer_size">Buffer Size</string>
+    <string name="settings_auto_reconnect">Auto Reconnect</string>
+    <string name="settings_external_audio">External Audio (Experimental)</string>
+    <string name="settings_audio_offset_default">Default Audio Offset</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_clear_cache">Clear Cache</string>
+
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_stream_failed">Stream loading failed</string>
+    <string name="error_invalid_url">Invalid URL</string>
+    <string name="error_empty_playlist">Empty playlist</string>
+    <string name="error_network">Network error</string>
+    <string name="error_unknown">Unknown error</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
+    <string name="loading">Loading…</string>
+    <string name="empty">Empty</string>
+    <string name="version">Version %1$s</string>
+
+    <string name="about_description">Premium Arabic Sports IPTV app for Android TV and Phones</string>
+    <string name="about_version">Version: %1$s</string>
+    <string name="about_arch">Architecture: ARM64</string>
+
+    <string name="tv_settings">TV Settings</string>
+    <string name="tv_dpad_hint">Use directional buttons to navigate</string>
+</resources>

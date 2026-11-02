@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <!-- Dark background -->
+    <path android:fillColor="#0A0A0A" android:pathData="M0,0h320v180h-320z" />
+    <!-- Gold accent stripe -->
+    <path android:fillColor="#FFD700" android:pathData="M0,0h320v4h-320z" />
+    <path android:fillColor="#00C853" android:pathData="M0,176h320v4h-320z" />
+    <!-- "S" monogram -->
+    <path android:fillColor="#FFD700"
+        android:pathData="M130,60 C120,60 115,68 115,75 C115,85 125,88 135,90 C145,92 150,95 150,102 C150,112 140,118 130,118 C120,118 112,112 110,105" />
+    <!-- TV text -->
+    <path android:fillColor="#FFFFFF" android:pathData="M160,90 L165,90 L167,82 L172,82 L170,90 L178,90 L178,95 L168,95 L166,105 L161,105 L163,95 L160,95 Z" />
+</vector>

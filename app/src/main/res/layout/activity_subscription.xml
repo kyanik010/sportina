@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_dark">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/nav_subscriptions"
+        android:textColor="@color/sportiv_gold"
+        android:textSize="@dimen/text_xl"
+        android:textStyle="bold"
+        android:padding="@dimen/spacing_md" />
+
+    <!-- Add subscription form -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/surface_dark"
+        android:padding="@dimen/spacing_md"
+        android:layout_margin="@dimen/spacing_sm">
+
+        <EditText
+            android:id="@+id/edit_sub_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sub_name"
+            android:textColorHint="@color/text_hint_dark"
+            android:textColor="@color/text_primary_dark"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/edit_sub_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sub_url"
+            android:textColorHint="@color/text_hint_dark"
+            android:textColor="@color/text_primary_dark"
+            android:inputType="textUri" />
+
+        <EditText
+            android:id="@+id/edit_sub_epg_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sub_epg_url"
+            android:textColorHint="@color/text_hint_dark"
+            android:textColor="@color/text_primary_dark"
+            android:inputType="textUri" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edit_sub_username"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/sub_username"
+                android:textColorHint="@color/text_hint_dark"
+                android:textColor="@color/text_primary_dark"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/edit_sub_password"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/sub_password"
+                android:textColorHint="@color/text_hint_dark"
+                android:textColor="@color/text_primary_dark"
+                android:inputType="textPassword" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_sub_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sub_save"
+            android:layout_marginTop="@dimen/spacing_sm" />
+    </LinearLayout>
+
+    <!-- Subscriptions list -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/subscriptions_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/sub_empty_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/sub_no_subscriptions"
+            android:textColor="@color/text_secondary_dark"
+            android:textSize="@dimen/text_md"
+            android:visibility="gone"
+            android:gravity="center"
+            android:padding="@dimen/spacing_lg" />
+
+        <ProgressBar
+            android:id="@+id/sub_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminateTint="@color/sportiv_gold" />
+    </FrameLayout>
+
+</LinearLayout>
