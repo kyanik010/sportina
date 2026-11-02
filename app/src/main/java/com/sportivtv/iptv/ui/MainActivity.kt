@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var loadingProgress: ProgressBar
     private lateinit var emptyStateText: TextView
     private lateinit var emptyStateAction: com.google.android.material.button.MaterialButton
+    private lateinit var emptyStatePanel: android.view.View
     private lateinit var channelAdapter: ChannelGridAdapter
 
     private var allChannels: List<Channel> = emptyList()
@@ -83,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         loadingProgress = findViewById(R.id.loading_progress)
         emptyStateText = findViewById(R.id.empty_state_text)
         emptyStateAction = findViewById(R.id.empty_state_action)
+        emptyStatePanel = findViewById(R.id.empty_state_panel)
         emptyStateAction.setOnClickListener {
             startActivity(Intent(this, SubscriptionActivity::class.java))
         }
@@ -199,9 +201,11 @@ class MainActivity : AppCompatActivity() {
                 hasNoSubscriptions -> getString(R.string.welcome_empty_description)
                 else -> getString(R.string.sub_no_channels_for_category)
             }
+            emptyStatePanel.visibility = View.VISIBLE
             emptyStateText.visibility = View.VISIBLE
             emptyStateAction.visibility = if (currentSearchQuery.isNotBlank()) View.GONE else View.VISIBLE
         } else {
+            emptyStatePanel.visibility = View.GONE
             emptyStateText.visibility = View.GONE
             emptyStateAction.visibility = View.GONE
         }
