@@ -13,6 +13,8 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.PlaybackException
@@ -165,7 +167,8 @@ class PlayerActivity : ComponentActivity() {
         btnPrevChannel.setOnClickListener { switchToPrevChannel() }
         btnChannelList.setOnClickListener { toggleChannelList() }
         btnFavorite.setOnClickListener { toggleFavorite() }
-        btnAudioSync.setOnClickListener { toggleAudioSync() }
+        btnAudioSync.setOnClickListener { showExternalAudioSourcePicker() }
+        btnAudioSync.setOnLongClickListener { toggleAudioSync(); true }
         btnReconnect.setOnClickListener { reconnect() }
         errorRetryButton.setOnClickListener { reconnect() }
 
@@ -341,7 +344,42 @@ class PlayerActivity : ComponentActivity() {
     }
 
     /**
-     * Toggle external audio sync panel.
+     * Select a different IPTV channel as an audio-only commentary source.
+     * The primary video channel remains unchanged.
+     */
+    private fun showExternalAudioSourcePicker() {
+        val videoChannel = currentChannel ?: return
+        val audioSources = channels.filter { it.id != videoChannel.id }
+        if (audioSources.isEmpty()) {
+            Toast.makeText(this, "لا توجد قنوات أخرى لاختيار الصوت منها", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val options = arrayOf("إيقاف الصوت الخارجي") + audioSources.map { it.name }.toTypedArray()
+        AlertDialog.Builder(this)
+            .setTitle("اختر مصدر الصوت الخارجي")
+            .setItems(options) { _, which ->
+                if (which == 0) {
+                    externalAudio.stop(player)
+                    Toast.makeText(this, "تمت العودة إلى الصوت الأصلي", Toast.LENGTH_SHORT).show()
+                } else {
+                    val source = audioSources[which - 1]
+                    val accepted = externalAudio.start(source.streamUrl, player)
+                    val message = if (accepted) {
+                        "جارٍ الاتصال بمصدر الصوت: ${source.name}"
+                    } else {
+                        "تعذر بدء مصدر الصوت المحدد"
+                    }
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                }
+            }
+            .setNegativeButton("إلغاء", null)
+            .show()
+        resetHideControlsTimer()
+    }
+
+    /**
+     * Long-press the audio button to show the manual offset control.
      */
     private fun toggleAudioSync() {
         val visibility = audioOffsetSeekBar.visibility
