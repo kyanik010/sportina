@@ -56,6 +56,12 @@
     <string name="sub_channels_loaded">تم تحميل %1$d قناة</string>
     <string name="sub_no_subscriptions">لا توجد اشتراكات. أضف اشتراكًا للبدء.</string>
 
+    <string name="welcome_title">أهلاً بك في SportivTV</string>
+    <string name="welcome_empty_description">ابدأ بإضافة اشتراك IPTV. ستظهر قنواتك وتصنيفاتك هنا بعد الإضافة.</string>
+    <string name="welcome_add_subscription">إضافة اشتراك IPTV</string>
+    <string name="welcome_supported_formats">يدعم قوائم M3U وبيانات الاشتراك المتاحة</string>
+    <string name="sub_no_channels_for_category">لا توجد قنوات في هذا التصنيف. جرّب تصنيفًا آخر.</string>
+
     <!-- Search -->
     <string name="search_hint">ابحث عن قناة…</string>
     <string name="search_no_results">لا توجد نتائج</string>
