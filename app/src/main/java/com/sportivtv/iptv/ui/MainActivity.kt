@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var channelsRecyclerView: RecyclerView
     private lateinit var loadingProgress: ProgressBar
     private lateinit var emptyStateText: TextView
+    private lateinit var emptyStateAction: com.google.android.material.button.MaterialButton
     private lateinit var channelAdapter: ChannelGridAdapter
 
     private var allChannels: List<Channel> = emptyList()
@@ -81,6 +82,10 @@ class MainActivity : AppCompatActivity() {
         channelsRecyclerView = findViewById(R.id.channels_rv)
         loadingProgress = findViewById(R.id.loading_progress)
         emptyStateText = findViewById(R.id.empty_state_text)
+        emptyStateAction = findViewById(R.id.empty_state_action)
+        emptyStateAction.setOnClickListener {
+            startActivity(Intent(this, SubscriptionActivity::class.java))
+        }
         bottomNav = findViewById(R.id.bottom_nav)
 
         // Channel grid: 4 columns on phone, more on TV
@@ -186,15 +191,19 @@ class MainActivity : AppCompatActivity() {
 
         channelAdapter.updateChannels(filtered)
 
-        // Empty state
+        // Give first-time users a clear path to add a subscription.
+        val hasNoSubscriptions = subscriptionManager.getSubscriptions().isEmpty()
         if (filtered.isEmpty()) {
-            emptyStateText.text = if (currentSearchQuery.isNotBlank())
-                getString(R.string.search_no_results)
-            else
-                getString(R.string.sub_no_subscriptions)
+            emptyStateText.text = when {
+                currentSearchQuery.isNotBlank() -> getString(R.string.search_no_results)
+                hasNoSubscriptions -> getString(R.string.welcome_empty_description)
+                else -> getString(R.string.sub_no_channels_for_category)
+            }
             emptyStateText.visibility = View.VISIBLE
+            emptyStateAction.visibility = if (currentSearchQuery.isNotBlank()) View.GONE else View.VISIBLE
         } else {
             emptyStateText.visibility = View.GONE
+            emptyStateAction.visibility = View.GONE
         }
     }
 }
