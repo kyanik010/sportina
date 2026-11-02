@@ -2,6 +2,7 @@ package com.sportivtv.iptv.tv
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.sportivtv.iptv.R
 
 /**
  * Android TV host Activity.
