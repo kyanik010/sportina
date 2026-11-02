@@ -51,6 +51,12 @@
     <string name="sub_channels_loaded">Loaded %1$d channels</string>
     <string name="sub_no_subscriptions">No subscriptions. Add one to get started.</string>
 
+    <string name="welcome_title">Welcome to SportivTV</string>
+    <string name="welcome_empty_description">Add your IPTV subscription to get started. Your channels and categories will appear here.</string>
+    <string name="welcome_add_subscription">Add IPTV Subscription</string>
+    <string name="welcome_supported_formats">Supports M3U playlists and available subscription credentials</string>
+    <string name="sub_no_channels_for_category">No channels in this category. Try another category.</string>
+
     <string name="search_hint">Search channels…</string>
     <string name="search_no_results">No results</string>
 
