@@ -4,6 +4,9 @@ import android.content.Context
 import com.sportivtv.iptv.data.M3UParser
 import com.sportivtv.iptv.model.Channel
 import com.sportivtv.iptv.model.Subscription
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -31,9 +34,38 @@ class SubscriptionManager(context: Context) {
             .build()
     }
 
-    // In-memory subscription store (in production, this would use Room DB)
+    // Persist non-secret metadata locally; endpoints and credentials stay encrypted.
+    private val prefs = appContext.getSharedPreferences("sportiv_subscriptions", Context.MODE_PRIVATE)
+    private val json = Json { ignoreUnknownKeys = true }
     private val subscriptions = mutableMapOf<Long, Subscription>()
     private var nextId = 1L
+
+    init {
+        restoreSubscriptions()
+    }
+
+    private fun restoreSubscriptions() {
+        val stored = prefs.getString("items", null) ?: return
+        runCatching {
+            json.decodeFromString<List<Subscription>>(stored).forEach { safe ->
+                val id = safe.id
+                val url = secureStorage.getPlaylistUrl(id) ?: return@forEach
+                subscriptions[id] = safe.copy(
+                    playlistUrl = url,
+                    username = secureStorage.getUsername(id),
+                    password = secureStorage.getPassword(id)
+                )
+                nextId = maxOf(nextId, id + 1)
+            }
+        }
+    }
+
+    private fun persistSubscriptions() {
+        val safeItems = subscriptions.values.map {
+            it.copy(playlistUrl = "", username = null, password = null)
+        }
+        prefs.edit().putString("items", json.encodeToString(safeItems)).apply()
+    }
 
     /**
      * Add a new subscription.
@@ -56,10 +88,10 @@ class SubscriptionManager(context: Context) {
         )
         subscriptions[id] = sub
 
-        // Securely store credentials if provided
+        secureStorage.storePlaylistUrl(id, playlistUrl)
         username?.let { secureStorage.storeUsername(id, it) }
         password?.let { secureStorage.storePassword(id, it) }
-
+        persistSubscriptions()
         return sub
     }
 
@@ -68,8 +100,10 @@ class SubscriptionManager(context: Context) {
      */
     fun updateSubscription(subscription: Subscription) {
         subscriptions[subscription.id] = subscription
+        secureStorage.storePlaylistUrl(subscription.id, subscription.playlistUrl)
         subscription.username?.let { secureStorage.storeUsername(subscription.id, it) }
         subscription.password?.let { secureStorage.storePassword(subscription.id, it) }
+        persistSubscriptions()
     }
 
     /**
@@ -78,6 +112,7 @@ class SubscriptionManager(context: Context) {
     fun deleteSubscription(id: Long) {
         subscriptions.remove(id)
         secureStorage.removeCredentials(id)
+        persistSubscriptions()
     }
 
     /**
