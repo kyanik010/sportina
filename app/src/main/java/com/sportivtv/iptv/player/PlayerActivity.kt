@@ -269,6 +269,8 @@ class PlayerActivity : ComponentActivity() {
         if (currentChannelIndex >= 0) channelListAdapter.setSelectedPosition(currentChannelIndex)
         channelNameText.text = channel.name
         reconnectAttempts = 0
+        errorRetryButton.visibility = View.GONE
+        errorText.visibility = View.GONE
 
         // Save watch state
         saveWatchState(channel)
@@ -425,33 +427,47 @@ class PlayerActivity : ComponentActivity() {
      */
     private fun handlePlayerError(error: PlaybackException) {
         loadingProgressBar.visibility = View.GONE
+        errorText.text = getString(
+            if (autoReconnectEnabled && reconnectAttempts < maxReconnectAttempts)
+                R.string.player_error_reconnect else R.string.player_error
+        )
+        errorText.visibility = View.VISIBLE
 
-        if (reconnectAttempts < maxReconnectAttempts) {
+        if (autoReconnectEnabled && reconnectAttempts < maxReconnectAttempts) {
             reconnectAttempts++
-            errorText.text = getString(R.string.player_error_reconnect)
-            errorText.visibility = View.VISIBLE
-
-            // Exponential backoff: 2s, 4s, 8s, 16s, 32s
-            val delay = (2000L * (1 shl (reconnectAttempts - 1)))
+            errorRetryButton.visibility = View.GONE
+            val delay = (2000L * (1 shl (reconnectAttempts - 1))).coerceAtMost(30_000L)
+            handler.removeCallbacksAndMessages(null)
             handler.postDelayed({
-                currentChannel?.let { playChannel(it) }
+                if (!isFinishing && !isDestroyed) retryCurrentStream()
             }, delay)
         } else {
             errorText.text = "${getString(R.string.player_error)}: ${error.errorCodeName}"
-            errorText.visibility = View.VISIBLE
             errorRetryButton.visibility = View.VISIBLE
         }
     }
 
+    private fun retryCurrentStream() {
+        val channel = currentChannel ?: return
+        player.setMediaItem(playerFactory.createMediaItem(channel.streamUrl))
+        player.prepare()
+        player.playWhenReady = true
+    }
+
     /**
-     * Handle stream end (live streams shouldn't end normally).
+     * Handle stream end (live streams should not end normally).
      */
     private fun handleStreamEnd() {
-        if (reconnectAttempts < maxReconnectAttempts) {
+        if (autoReconnectEnabled && reconnectAttempts < maxReconnectAttempts) {
             reconnectAttempts++
+            val delay = (2000L * (1 shl (reconnectAttempts - 1))).coerceAtMost(30_000L)
             handler.postDelayed({
-                currentChannel?.let { playChannel(it) }
-            }, 2000)
+                if (!isFinishing && !isDestroyed) retryCurrentStream()
+            }, delay)
+        } else {
+            errorText.text = getString(R.string.player_error)
+            errorText.visibility = View.VISIBLE
+            errorRetryButton.visibility = View.VISIBLE
         }
     }
 
