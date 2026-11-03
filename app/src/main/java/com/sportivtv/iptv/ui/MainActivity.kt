@@ -130,12 +130,17 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_channels -> {
                     destination = Destination.CHANNELS
+                    if (searchEditText.text.isNotEmpty()) searchEditText.setText("")
+                    currentCategory = ChannelCategory.ALL
+                    categoryTabs.getTabAt(0)?.select()
                     sectionTitle.setText(R.string.browse_title)
                     if (hasLoadedOnce) renderChannels() else loadChannels()
                     true
                 }
                 R.id.nav_favorites -> {
                     destination = Destination.FAVORITES
+                    if (searchEditText.text.isNotEmpty()) searchEditText.setText("")
+                    currentSearchQuery = ""
                     sectionTitle.setText(R.string.favorites_title)
                     currentCategory = ChannelCategory.ALL
                     categoryTabs.getTabAt(0)?.select()
