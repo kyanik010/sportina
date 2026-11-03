@@ -89,6 +89,7 @@ class PlayerActivity : ComponentActivity() {
     private var bufferSizeMs = 30000
     private val maxReconnectAttempts = 5
     private val handler = Handler(Looper.getMainLooper())
+    private var pendingReconnect: Runnable? = null
 
     // Auto-hide controls
     private val controlsHideDelay = 5000L
@@ -269,6 +270,8 @@ class PlayerActivity : ComponentActivity() {
         if (currentChannelIndex >= 0) channelListAdapter.setSelectedPosition(currentChannelIndex)
         channelNameText.text = channel.name
         reconnectAttempts = 0
+        pendingReconnect?.let(handler::removeCallbacks)
+        pendingReconnect = null
         errorRetryButton.visibility = View.GONE
         errorText.visibility = View.GONE
 
@@ -417,7 +420,10 @@ class PlayerActivity : ComponentActivity() {
      */
     private fun reconnect() {
         val channel = currentChannel ?: return
+        pendingReconnect?.let(handler::removeCallbacks)
+        pendingReconnect = null
         errorText.visibility = View.GONE
+        errorRetryButton.visibility = View.GONE
         loadingProgressBar.visibility = View.VISIBLE
         playChannel(channel)
     }
@@ -437,10 +443,11 @@ class PlayerActivity : ComponentActivity() {
             reconnectAttempts++
             errorRetryButton.visibility = View.GONE
             val delay = (2000L * (1 shl (reconnectAttempts - 1))).coerceAtMost(30_000L)
-            handler.removeCallbacksAndMessages(null)
-            handler.postDelayed({
+            pendingReconnect?.let(handler::removeCallbacks)
+            pendingReconnect = Runnable {
                 if (!isFinishing && !isDestroyed) retryCurrentStream()
-            }, delay)
+            }
+            handler.postDelayed(pendingReconnect!!, delay)
         } else {
             errorText.text = "${getString(R.string.player_error)}: ${error.errorCodeName}"
             errorRetryButton.visibility = View.VISIBLE
@@ -461,9 +468,11 @@ class PlayerActivity : ComponentActivity() {
         if (autoReconnectEnabled && reconnectAttempts < maxReconnectAttempts) {
             reconnectAttempts++
             val delay = (2000L * (1 shl (reconnectAttempts - 1))).coerceAtMost(30_000L)
-            handler.postDelayed({
+            pendingReconnect?.let(handler::removeCallbacks)
+            pendingReconnect = Runnable {
                 if (!isFinishing && !isDestroyed) retryCurrentStream()
-            }, delay)
+            }
+            handler.postDelayed(pendingReconnect!!, delay)
         } else {
             errorText.text = getString(R.string.player_error)
             errorText.visibility = View.VISIBLE
@@ -598,7 +607,8 @@ class PlayerActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        handler.removeCallbacksAndMessages(null)
+        pendingReconnect?.let(handler::removeCallbacks)
+        handler.removeCallbacks(hideControlsRunnable)
         externalAudio.release()
         player.release()
         super.onDestroy()
