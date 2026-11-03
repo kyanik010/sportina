@@ -258,6 +258,7 @@ class PlayerActivity : ComponentActivity() {
      */
     private fun playChannel(channel: Channel) {
         currentChannel = channel
+        if (currentChannelIndex >= 0) channelListAdapter.setSelectedPosition(currentChannelIndex)
         channelNameText.text = channel.name
         reconnectAttempts = 0
 
