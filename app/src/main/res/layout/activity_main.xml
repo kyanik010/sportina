@@ -6,22 +6,89 @@
     android:orientation="vertical"
     android:background="@color/background_dark">
 
-    <!-- Search bar -->
-    <EditText
-        android:id="@+id/search_edit"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/search_hint"
-        android:textColorHint="@color/text_hint_dark"
-        android:textColor="@color/text_primary_dark"
-        android:background="@color/surface_dark"
-        android:padding="@dimen/spacing_md"
-        android:drawableStart="@drawable/ic_search"
-        android:drawablePadding="@dimen/spacing_sm"
-        android:inputType="text"
-        android:imeOptions="actionSearch" />
+        android:orientation="vertical"
+        android:paddingStart="@dimen/spacing_md"
+        android:paddingEnd="@dimen/spacing_md"
+        android:paddingTop="@dimen/spacing_md"
+        android:paddingBottom="@dimen/spacing_sm"
+        android:background="@color/surface_dark">
 
-    <!-- Category tabs -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/browse_brand"
+                    android:textColor="@color/sportiv_gold"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:letterSpacing="0.14" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/browse_title"
+                    android:textColor="@color/text_primary_dark"
+                    android:textStyle="bold"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/channel_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/sportiv_gold"
+                android:textSize="12sp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:background="@drawable/bg_login_field" />
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            app:boxBackgroundMode="filled"
+            app:boxBackgroundColor="@color/card_dark"
+            app:boxCornerRadiusTopStart="14dp"
+            app:boxCornerRadiusTopEnd="14dp"
+            app:boxCornerRadiusBottomStart="14dp"
+            app:boxCornerRadiusBottomEnd="14dp"
+            app:boxStrokeColor="@color/sportiv_gold"
+            app:startIconDrawable="@drawable/ic_search"
+            app:startIconTint="@color/sportiv_gold"
+            app:hintEnabled="false">
+
+            <EditText
+                android:id="@+id/search_edit"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:hint="@string/search_hint"
+                android:textColorHint="@color/text_hint_dark"
+                android:textColor="@color/text_primary_dark"
+                android:background="@android:color/transparent"
+                android:paddingStart="4dp"
+                android:paddingEnd="12dp"
+                android:inputType="text"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:importantForAutofill="no" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/category_tabs"
         android:layout_width="match_parent"
@@ -29,10 +96,12 @@
         app:tabTextColor="@color/text_secondary_dark"
         app:tabSelectedTextColor="@color/sportiv_gold"
         app:tabIndicatorColor="@color/sportiv_gold"
+        app:tabIndicatorHeight="3dp"
         app:tabMode="scrollable"
+        app:tabGravity="start"
+        app:tabRippleColor="@color/card_dark_pressed"
         android:background="@color/surface_dark" />
 
-    <!-- Content area -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -43,7 +112,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:padding="@dimen/spacing_sm" />
+            android:paddingStart="@dimen/spacing_sm"
+            android:paddingEnd="@dimen/spacing_sm"
+            android:paddingTop="@dimen/spacing_md"
+            android:paddingBottom="@dimen/spacing_md"
+            android:scrollbars="vertical"
+            android:overScrollMode="ifContentScrolls" />
 
         <ProgressBar
             android:id="@+id/loading_progress"
@@ -116,7 +190,6 @@
         </LinearLayout>
     </FrameLayout>
 
-    <!-- Bottom navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
@@ -124,6 +197,6 @@
         app:menu="@menu/bottom_nav_menu"
         app:itemTextColor="@color/sportiv_gold"
         app:itemIconTint="@color/sportiv_gold"
+        app:labelVisibilityMode="labeled"
         android:background="@color/surface_dark" />
-
 </LinearLayout>
