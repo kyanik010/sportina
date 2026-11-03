@@ -156,6 +156,7 @@ class TvMainFragment : BrowseSupportFragment() {
             favorite.setOnClickListener {
                 favoritesManager.toggleFavorite(channel)
                 renderFavorite()
+                loadChannels()
                 Toast.makeText(
                     requireContext(),
                     if (favoritesManager.isFavorite(channel.id)) R.string.fav_added_toast else R.string.fav_removed_toast,
