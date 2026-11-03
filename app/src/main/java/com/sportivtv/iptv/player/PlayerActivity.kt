@@ -208,6 +208,7 @@ class PlayerActivity : ComponentActivity() {
                     Player.STATE_BUFFERING -> {
                         loadingProgressBar.visibility = View.VISIBLE
                         errorText.visibility = View.GONE
+                        errorRetryButton.visibility = View.GONE
                     }
                     Player.STATE_READY -> {
                         loadingProgressBar.visibility = View.GONE
