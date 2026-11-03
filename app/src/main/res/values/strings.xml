@@ -87,6 +87,8 @@
     <string name="epg_next">Next</string>
     <string name="epg_no_data">No EPG data available</string>
     <string name="epg_loading">Loading TV guide…</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_external_audio_note">Experimental feature. Availability depends on the provider stream.</string>
     <string name="settings_player">Player Settings</string>
     <string name="settings_audio">Audio Settings</string>
     <string name="settings_video">Video Settings</string>
