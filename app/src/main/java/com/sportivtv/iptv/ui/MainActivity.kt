@@ -193,7 +193,7 @@ class MainActivity : AppCompatActivity() {
                 name = favorite.channelName,
                 logoUrl = favorite.channelLogo,
                 streamUrl = favorite.streamUrl,
-                category = Channel.categorize(favorite.channelName, null)
+                category = favorite.category
             )
         }
         renderChannels()
