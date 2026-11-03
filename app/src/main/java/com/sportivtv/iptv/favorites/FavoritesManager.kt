@@ -3,6 +3,7 @@ package com.sportivtv.iptv.favorites
 import android.content.Context
 import android.content.SharedPreferences
 import com.sportivtv.iptv.model.Channel
+import com.sportivtv.iptv.model.ChannelCategory
 import com.sportivtv.iptv.model.Favorite
 import org.json.JSONArray
 import org.json.JSONObject
