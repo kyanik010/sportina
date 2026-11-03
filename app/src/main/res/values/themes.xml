@@ -9,8 +9,8 @@
         <!-- Colors -->
         <item name="colorPrimary">@color/sportiv_gold</item>
         <item name="colorPrimaryVariant">@color/sportiv_gold_dark</item>
-        <item name="colorSecondary">@color/sportiv_green</item>
-        <item name="colorSecondaryVariant">@color/sportiv_green_dark</item>
+        <item name="colorSecondary">@color/sportiv_gold</item>
+        <item name="colorSecondaryVariant">@color/sportiv_gold_dark</item>
         <item name="colorOnPrimary">@color/black</item>
         <item name="colorOnSecondary">@color/black</item>
         <item name="colorSurface">@color/surface_dark</item>
