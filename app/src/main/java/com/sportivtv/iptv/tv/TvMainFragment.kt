@@ -128,7 +128,7 @@ class TvMainFragment : BrowseSupportFragment() {
     private inner class ChannelPresenter : Presenter() {
         override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
             val view = android.view.LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_channel_grid, parent, false)
+                .inflate(R.layout.item_channel_tv, parent, false)
             return ViewHolder(view)
         }
 
