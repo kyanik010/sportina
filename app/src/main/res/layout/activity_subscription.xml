@@ -10,28 +10,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="24dp"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
+        android:paddingTop="22dp"
         android:paddingBottom="28dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SPORTIVTV  •  PREMIUM IPTV"
+            android:text="@string/browse_brand"
             android:textColor="@color/sportiv_gold"
             android:textStyle="bold"
-            android:textSize="12sp"
-            android:letterSpacing="0.12"
-            android:layout_marginBottom="10dp" />
+            android:textSize="11sp"
+            android:letterSpacing="0.12" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login_title"
             android:textColor="@color/text_primary_dark"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+            android:textSize="27sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -39,157 +39,163 @@
             android:text="@string/login_subtitle"
             android:textColor="@color/text_secondary_dark"
             android:textSize="14sp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="20dp" />
+            android:lineSpacingExtra="3dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="18dp" />
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_welcome_panel"
-            android:padding="18dp">
+            app:cardBackgroundColor="@color/card_dark"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/surface_light"
+            app:strokeWidth="1dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/login_credentials_title"
-                android:textColor="@color/sportiv_gold"
-                android:textStyle="bold"
-                android:textSize="17sp"
-                android:layout_marginBottom="14dp" />
+                android:orientation="vertical"
+                android:padding="18dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sub_name"
-                android:textColor="@color/text_secondary_dark"
-                android:textSize="12sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_credentials_title"
+                    android:textColor="@color/sportiv_gold"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:layout_marginBottom="16dp" />
 
-            <EditText
-                android:id="@+id/edit_sub_name"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:hint="@string/login_name_hint"
-                android:textColorHint="@color/text_hint_dark"
-                android:textColor="@color/text_primary_dark"
-                android:singleLine="true"
-                android:inputType="textCapSentences"
-                android:paddingHorizontal="14dp"
-                android:background="@drawable/bg_login_field"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="14dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sub_name"
+                    android:textColor="@color/text_secondary_dark"
+                    android:textSize="12sp" />
+                <EditText
+                    android:id="@+id/edit_sub_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:hint="@string/login_name_hint"
+                    android:textColorHint="@color/text_hint_dark"
+                    android:textColor="@color/text_primary_dark"
+                    android:singleLine="true"
+                    android:inputType="textCapSentences"
+                    android:paddingHorizontal="14dp"
+                    android:background="@drawable/bg_login_field"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="14dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/login_server_label"
-                android:textColor="@color/text_secondary_dark"
-                android:textSize="12sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_server_label"
+                    android:textColor="@color/text_secondary_dark"
+                    android:textSize="12sp" />
+                <EditText
+                    android:id="@+id/edit_sub_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:hint="@string/login_server_hint"
+                    android:textColorHint="@color/text_hint_dark"
+                    android:textColor="@color/text_primary_dark"
+                    android:singleLine="true"
+                    android:inputType="textUri"
+                    android:paddingHorizontal="14dp"
+                    android:background="@drawable/bg_login_field"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="14dp" />
 
-            <EditText
-                android:id="@+id/edit_sub_url"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:hint="@string/login_server_hint"
-                android:textColorHint="@color/text_hint_dark"
-                android:textColor="@color/text_primary_dark"
-                android:singleLine="true"
-                android:inputType="textUri"
-                android:paddingHorizontal="14dp"
-                android:background="@drawable/bg_login_field"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="14dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_account_label"
+                    android:textColor="@color/text_secondary_dark"
+                    android:textSize="12sp" />
+                <EditText
+                    android:id="@+id/edit_sub_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:hint="@string/sub_username"
+                    android:textColorHint="@color/text_hint_dark"
+                    android:textColor="@color/text_primary_dark"
+                    android:singleLine="true"
+                    android:inputType="text"
+                    android:paddingHorizontal="14dp"
+                    android:background="@drawable/bg_login_field"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="10dp" />
+                <EditText
+                    android:id="@+id/edit_sub_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:hint="@string/sub_password"
+                    android:textColorHint="@color/text_hint_dark"
+                    android:textColor="@color/text_primary_dark"
+                    android:singleLine="true"
+                    android:inputType="textPassword"
+                    android:paddingHorizontal="14dp"
+                    android:background="@drawable/bg_login_field"
+                    android:layout_marginBottom="14dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/login_account_label"
-                android:textColor="@color/text_secondary_dark"
-                android:textSize="12sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_m3u_label"
+                    android:textColor="@color/text_secondary_dark"
+                    android:textSize="12sp" />
+                <EditText
+                    android:id="@+id/edit_sub_epg_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:hint="@string/login_epg_hint"
+                    android:textColorHint="@color/text_hint_dark"
+                    android:textColor="@color/text_primary_dark"
+                    android:singleLine="true"
+                    android:inputType="textUri"
+                    android:paddingHorizontal="14dp"
+                    android:background="@drawable/bg_login_field"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="17dp" />
 
-            <EditText
-                android:id="@+id/edit_sub_username"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:hint="@string/sub_username"
-                android:textColorHint="@color/text_hint_dark"
-                android:textColor="@color/text_primary_dark"
-                android:singleLine="true"
-                android:inputType="text"
-                android:paddingHorizontal="14dp"
-                android:background="@drawable/bg_login_field"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="10dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_sub_save"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="@string/login_connect_button"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/background_dark"
+                    android:backgroundTint="@color/sportiv_gold"
+                    app:cornerRadius="15dp" />
 
-            <EditText
-                android:id="@+id/edit_sub_password"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:hint="@string/sub_password"
-                android:textColorHint="@color/text_hint_dark"
-                android:textColor="@color/text_primary_dark"
-                android:singleLine="true"
-                android:inputType="textPassword"
-                android:paddingHorizontal="14dp"
-                android:background="@drawable/bg_login_field"
-                android:layout_marginBottom="14dp" />
+                <ProgressBar
+                    android:id="@+id/sub_progress"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:layout_marginTop="12dp"
+                    android:indeterminateTint="@color/sportiv_gold" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/login_m3u_label"
-                android:textColor="@color/text_secondary_dark"
-                android:textSize="12sp" />
-
-            <EditText
-                android:id="@+id/edit_sub_epg_url"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:hint="@string/login_epg_hint"
-                android:textColorHint="@color/text_hint_dark"
-                android:textColor="@color/text_primary_dark"
-                android:singleLine="true"
-                android:inputType="textUri"
-                android:paddingHorizontal="14dp"
-                android:background="@drawable/bg_login_field"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="16dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_sub_save"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="@string/login_connect_button"
-                android:textStyle="bold"
-                android:textSize="15sp"
-                android:textColor="@color/background_dark"
-                android:backgroundTint="@color/sportiv_gold"
-                app:cornerRadius="14dp" />
-
-            <ProgressBar
-                android:id="@+id/sub_progress"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center"
-                android:visibility="gone"
-                android:layout_marginTop="12dp"
-                android:indeterminateTint="@color/sportiv_gold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/login_privacy_note"
-                android:textColor="@color/text_hint_dark"
-                android:textSize="11sp"
-                android:gravity="center"
-                android:layout_marginTop="12dp" />
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_privacy_note"
+                    android:textColor="@color/text_hint_dark"
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="2dp"
+                    android:layout_marginTop="13dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login_saved_title"
-            android:textColor="@color/sportiv_gold"
+            android:textColor="@color/text_primary_dark"
             android:textStyle="bold"
             android:textSize="18sp"
             android:layout_marginTop="26dp"
