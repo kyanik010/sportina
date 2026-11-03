@@ -125,6 +125,12 @@ class SubscriptionActivity : AppCompatActivity() {
                 refreshList()
                 setResult(RESULT_OK)
                 finish()
+            } catch (error: Exception) {
+                Toast.makeText(
+                    this@SubscriptionActivity,
+                    getString(R.string.error_network) + ": " + (error.message ?: ""),
+                    Toast.LENGTH_LONG
+                ).show()
             } finally {
                 progressBar.visibility = View.GONE
                 saveButton.isEnabled = true
@@ -135,14 +141,19 @@ class SubscriptionActivity : AppCompatActivity() {
     private fun testSubscription(sub: Subscription) {
         progressBar.visibility = View.VISIBLE
         lifecycleScope.launch {
-            val result = subscriptionManager.testSubscription(sub.playlistUrl)
-            progressBar.visibility = View.GONE
-            val message = if (result.success) {
-                getString(R.string.sub_test_success) + " (${result.channelCount})"
-            } else {
-                getString(R.string.sub_test_fail) + ": ${result.message}"
+            try {
+                val result = subscriptionManager.testSubscription(sub.playlistUrl)
+                val message = if (result.success) {
+                    getString(R.string.sub_test_success) + " (${result.channelCount})"
+                } else {
+                    getString(R.string.sub_test_fail) + ": ${result.message}"
+                }
+                Toast.makeText(this@SubscriptionActivity, message, Toast.LENGTH_LONG).show()
+            } catch (error: Exception) {
+                Toast.makeText(this@SubscriptionActivity, R.string.error_network, Toast.LENGTH_LONG).show()
+            } finally {
+                progressBar.visibility = View.GONE
             }
-            Toast.makeText(this@SubscriptionActivity, message, Toast.LENGTH_LONG).show()
         }
     }
 
