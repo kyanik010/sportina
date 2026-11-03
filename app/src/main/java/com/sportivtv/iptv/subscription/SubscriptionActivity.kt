@@ -124,6 +124,7 @@ class SubscriptionActivity : AppCompatActivity() {
                 ).show()
                 refreshList()
                 setResult(RESULT_OK)
+                finish()
             } finally {
                 progressBar.visibility = View.GONE
                 saveButton.isEnabled = true
