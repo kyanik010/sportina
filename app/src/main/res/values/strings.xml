@@ -40,6 +40,7 @@
     <string name="sub_epg_url">EPG URL (XMLTV)</string>
     <string name="sub_username">Username (optional)</string>
     <string name="sub_password">Password (optional)</string>
+    <string name="sub_credentials_both_required">Enter both username and password for Xtream Codes login.</string>
     <string name="sub_save">Save</string>
     <string name="sub_delete">Delete</string>
     <string name="sub_test">Test</string>
@@ -51,6 +52,30 @@
     <string name="sub_channels_loaded">Loaded %1$d channels</string>
     <string name="sub_no_subscriptions">No subscriptions. Add one to get started.</string>
 
+    <string name="welcome_title">Welcome to SportivTV</string>
+    <string name="welcome_empty_description">Add your IPTV subscription to get started. Your channels and categories will appear here.</string>
+    <string name="welcome_add_subscription">Add IPTV Subscription</string>
+    <string name="welcome_supported_formats">Supports M3U playlists and available subscription credentials</string>
+    <string name="sub_no_channels_for_category">No channels in this category. Try another category.</string>
+
+    <string name="login_title">Connect your subscription</string>
+    <string name="login_subtitle">Enter your provider details to start watching live channels.</string>
+    <string name="login_credentials_title">Subscription details</string>
+    <string name="login_name_hint">Example: Sports subscription</string>
+    <string name="login_server_label">Server URL or M3U playlist URL</string>
+    <string name="login_server_hint">https://server.example:8080</string>
+    <string name="login_account_label">Username and password — leave blank for M3U</string>
+    <string name="login_m3u_label">EPG guide URL (optional)</string>
+    <string name="login_epg_hint">https://server.example/epg.xml</string>
+    <string name="login_connect_button">Verify connection and save</string>
+    <string name="login_privacy_note">Subscription details are encrypted on this device. Passwords are never shown in the list.</string>
+    <string name="login_saved_title">Your saved subscriptions</string>
+    <string name="login_connecting">Verifying subscription…</string>
+    <string name="login_connection_failed">Connection failed. Check the server URL and login details.</string>
+    <string name="login_connection_ok">Connected — %1$d channels found</string>
+    <string name="login_url_invalid">Enter a valid URL starting with http:// or https://</string>
+    <string name="login_default_name">My subscription</string>
+    <string name="login_no_credentials">Enter both username and password, or leave both blank for M3U.</string>
     <string name="search_hint">Search channels…</string>
     <string name="search_no_results">No results</string>
 
@@ -98,4 +123,8 @@
 
     <string name="tv_settings">TV Settings</string>
     <string name="tv_dpad_hint">Use directional buttons to navigate</string>
+    <string name="browse_brand">SPORTIV TV • LIVE</string>
+    <string name="browse_title">Live Channels</string>
+    <string name="browse_channel_count">%1$d channels</string>
+    <string name="channel_logo_description">Channel logo</string>
 </resources>

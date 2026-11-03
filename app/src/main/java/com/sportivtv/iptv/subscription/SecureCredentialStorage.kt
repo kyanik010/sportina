@@ -48,7 +48,7 @@ class SecureCredentialStorage(context: Context) {
      * Remove credentials for a subscription.
      */
     fun removeCredentials(subscriptionId: Long) {
-        prefs.edit().remove("pwd_$subscriptionId").apply()
+        prefs.edit().remove("pwd_$subscriptionId").remove("user_$subscriptionId").remove("url_$subscriptionId").apply()
     }
 
     /**
@@ -60,5 +60,13 @@ class SecureCredentialStorage(context: Context) {
 
     fun getUsername(subscriptionId: Long): String? {
         return prefs.getString("user_$subscriptionId", null)
+    }
+
+    fun storePlaylistUrl(subscriptionId: Long, url: String) {
+        prefs.edit().putString("url_$subscriptionId", url).apply()
+    }
+
+    fun getPlaylistUrl(subscriptionId: Long): String? {
+        return prefs.getString("url_$subscriptionId", null)
     }
 }

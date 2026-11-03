@@ -1,105 +1,90 @@
-# SportivTV IPTV - تطبيق IPTV رياضي عربي
+# SportivTV
 
-تطبيق IPTV رياضي عربي فاخر لـ Android TV والهواتف.
+**Premium Arabic-first IPTV for Android phones and Android TV.**
 
-## المعمارية
+SportivTV uses a deep navy interface with warm-gold accents, RTL-aware layouts, and a subscription-first onboarding flow. The app is built for ARM64 Android devices.
 
-### المحرك
-- **ExoPlayer/Media3** - محرك تشغيل الفيديو الأساسي
-- **OkHttp** - طبقة الشبكة
-- لا يوجد مشغل فيديو ثانٍ. الصوت الخارجي يستخدم AudioTrack مستقل.
+## Product experience
 
-### المكونات الرئيسية
+### First launch
+- The phone home screen presents a clear welcome card and a direct **Add IPTV subscription** action instead of an unexplained empty channel grid.
+- Android TV shows a focusable, D-pad accessible **Add IPTV subscription** action when no playlist is configured.
+- After a successful connection, the channel browser is populated from the saved playlist.
 
-| المكون | الوصف |
-|--------|-------|
-| `PlayerFactory` | إنشاء ExoPlayer مهيأ لبث IPTV المباشر |
-| `PlayerActivity` | المشغل المتقدم مع تبديل القنوات والتحكم الكامل |
-| `ExternalAudioManager` | استخراج الصوت المستقل (تجريبي) |
-| `M3UParser` | تحليل قوائم تشغيل M3U/M3U8 |
-| `EpgParser` | تحليل دليل البرامج XMLTV |
-| `ChannelRepository` | مصدر بيانات القنوات مع تخزين مؤقت |
-| `ChannelSearch` | بحث بالعربية والإنجليزية مع توحيد الحروف |
-| `FavoritesManager` | إدارة القنوات المفضلة |
-| `SubscriptionManager` | إدارة اشتراكات IPTV |
-| `SecureCredentialStorage` | تخزين مشفر لكلمات المرور (AES-256-GCM) |
-| `BackendManager` | إدارة الأجهزة والإعدادات الآمنة |
+### Subscription sign-in
+The subscription screen provides:
+- A display name for the subscription.
+- An Xtream-compatible server URL with username and password.
+- Direct M3U/M3U8 playlist URLs when username and password are left empty.
+- An optional XMLTV/EPG URL.
+- A connection check before a subscription is saved.
+- A saved-subscriptions list with connection testing and deletion.
 
-## البناء
+For Xtream-style credentials, enter the provider's base server URL, username, and password. The app builds the standard M3U endpoint used by the existing playlist parser. For M3U, paste the complete playlist URL and leave both credential fields empty.
 
-### المتطلبات
-- Android Studio Hedgehog (2023.1) أو أحدث
+Passwords, usernames, and playlist endpoints are stored using AndroidX EncryptedSharedPreferences. Subscription metadata is persisted separately. The subscription list displays the server host rather than the full playlist URL so query-string credentials are not exposed in the UI.
+
+## Branding and interface
+
+- Dark navy base surfaces and warm-gold primary actions.
+- Arabic-first RTL layout with English resource fallbacks.
+- Custom launcher foreground and Android TV banner.
+- Rounded, outlined form fields and clear hierarchy for sign-in.
+- Phone navigation for channels, favorites, subscriptions, and settings.
+- Android TV Leanback browse experience with D-pad focus navigation.
+
+## Playback architecture — protected scope
+
+The subscription and interface work does not intentionally change the player implementation.
+
+- **Media3 / ExoPlayer:** primary video playback.
+- **Media3 audio-only session:** independent external audio source.
+- **OkHttp:** provider and playlist HTTP access.
+- **M3U / M3U8:** playlist parsing.
+- **XMLTV / EPG:** programme guide parsing.
+
+External audio synchronization must still be validated against real provider streams, including long-duration playback and reconnects. A separate audio session alone does not guarantee perfect synchronization between independent live feeds.
+
+## Build
+
+### Requirements
 - JDK 17
-- Android SDK 34 (compileSdk)
-- Gradle 8.5
+- Android SDK Platform 35
+- Android Gradle Plugin 8.7.2
+- Gradle Wrapper 8.12
 
-### بناء APK
+Do not commit local.properties, signing keys, or credentials.
 
+### Commands
+
+Windows PowerShell:
+```powershell
+.\gradlew.bat assembleDebug
+.\gradlew.bat assembleRelease
+.\gradlew.bat test
+```
+
+Linux / macOS:
 ```bash
-# بناء نسخة ARM64 (للإصدار)
-./gradlew assembleRelease
-
-# بناء نسخة تصحيح
 ./gradlew assembleDebug
-
-# بناء APK لكل معماريات
-./gradlew assembleDebug -PsplitAbi=true
-```
-
-### APK الناتج
-
-سيتم إنشاء الملفات في:
-```
-app/build/outputs/apk/release/
-├── SportivTV-v1.0.0-arm64-v8a.apk     (الإصدار الأساسي)
-├── SportivTV-v1.0.0-armeabi-v7a.apk   (للأجهزة القديمة)
-├── SportivTV-v1.0.0-x86_64.apk        (للمحاكيات)
-└── SportivTV-v1.0.0-universal.apk     (شامل)
-```
-
-### الاختبارات
-
-```bash
-# اختبارات الوحدة
+./gradlew assembleRelease
 ./gradlew test
-
-# اختبارات الأجهزة
-./gradlew connectedAndroidTest
 ```
 
-## التثبيت
+## ABI target
 
-### على Android TV
-```bash
-adb install -r SportivTV-v1.0.0-arm64-v8a.apk
-```
+Gradle is configured for arm64-v8a only. Confirm the APK's native libraries with apkanalyzer or unzip -l after each release build; the Gradle ABI filter alone is not a substitute for inspecting the packaged artifact.
 
-### على الهاتف
-```bash
-adb install -r SportivTV-v1.0.0-arm64-v8a.apk
-```
+## CI
 
-## المتطلبات
+GitHub Actions builds the debug APK and runs local unit tests. A green CI run confirms those tasks completed; it does not replace hands-on testing on physical phones and Android TV devices.
 
-- Android 5.0 (API 21) أو أحدث
-- اتصال بالإنترنت
-- اشتراك IPTV صالح
+## Security and release checklist
 
-## القيود المعروفة
-
-1. **الصوت الخارجي (تجريبي)**: يعمل مع بثوث TS/HLS القياسية فقط. لا يدعم البثوث المشفرة.
-2. **EPG**: يعتمد على توفير رابط XMLTV من مزود الاشتراك.
-3. **مزامنة الصوت**: قد تختلف دقتها حسب خصائص البث. يمكن ضبط الإزاحة يدويًا.
-
-## الأذونات
-
-- `INTERNET` - لبث IPTV
-- `ACCESS_NETWORK_STATE` - للتحقق من الاتصال
-- `WAKE_LOCK` - لإبقاء الشاشة مضاءة أثناء المشاهدة
-- `READ_EXTERNAL_STORAGE` - لاستيراد قوائم التشغيل (إذا لزم)
-
-## الأمان
-
-- كلمات مرور الاشتراكات مخزنة باستخدام AES-256-GCM
-- لا يتم تسجيل أو كشف بيانات الاشتراك الحساسة
-- اتصالات الشبكة تستخدم HTTPS عند توفرها
+- Never commit provider credentials, playlist URLs containing credentials, signing material, or local SDK paths.
+- Verify the subscription flow against both a valid and invalid provider account.
+- Confirm that no credential-bearing URL is printed in logs, toasts, or subscription cards.
+- Test phone layouts in portrait and landscape, Arabic RTL and English LTR.
+- Test Android TV navigation with a physical remote, including focus visibility and keyboard input.
+- Inspect the final APK for the intended ABI and test installation on an ARM64 device.
+- Validate player regressions separately; do not change playback libraries as part of UI work.

@@ -51,57 +51,62 @@ class EpgParser {
         var currentStop: Long = 0
         var currentTagName = ""
 
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            when (eventType) {
-                XmlPullParser.START_TAG -> {
-                    currentTagName = parser.name?.lowercase() ?: ""
-                    when (currentTagName) {
-                        "programme" -> {
-                            inProgramme = true
-                            currentChannelId = parser.getAttributeValue(null, "channel") ?: ""
-                            currentStart = parseXmltvDate(parser.getAttributeValue(null, "start"))
-                            currentStop = parseXmltvDate(parser.getAttributeValue(null, "stop"))
-                            currentTitle = ""
-                            currentDesc = null
-                            currentCategory = null
-                        }
-                    }
-                }
-
-                XmlPullParser.TEXT -> {
-                    if (inProgramme) {
-                        val text = parser.text?.trim() ?: ""
-                        if (text.isNotEmpty()) {
-                            when (currentTagName) {
-                                "title" -> currentTitle += text
-                                "desc" -> currentDesc = (currentDesc ?: "") + text
-                                "category" -> currentCategory = text
+        try {
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                when (eventType) {
+                    XmlPullParser.START_TAG -> {
+                        currentTagName = parser.name?.lowercase() ?: ""
+                        when (currentTagName) {
+                            "programme" -> {
+                                inProgramme = true
+                                currentChannelId = parser.getAttributeValue(null, "channel") ?: ""
+                                currentStart = parseXmltvDate(parser.getAttributeValue(null, "start"))
+                                currentStop = parseXmltvDate(parser.getAttributeValue(null, "stop"))
+                                currentTitle = ""
+                                currentDesc = null
+                                currentCategory = null
                             }
                         }
                     }
-                }
-
-                XmlPullParser.END_TAG -> {
-                    val tagName = parser.name?.lowercase() ?: ""
-                    if (tagName == "programme" && inProgramme) {
-                        if (currentChannelId.isNotEmpty() && currentTitle.isNotEmpty() && currentStart > 0) {
-                            programs.add(
-                                EpgProgram(
-                                    channelId = currentChannelId,
-                                    title = currentTitle.trim(),
-                                    description = currentDesc?.trim()?.takeIf { it.isNotEmpty() },
-                                    startTime = currentStart,
-                                    endTime = if (currentStop > 0) currentStop else currentStart + 3600000,
-                                    category = currentCategory
-                                )
-                            )
+    
+                    XmlPullParser.TEXT -> {
+                        if (inProgramme) {
+                            val text = parser.text?.trim() ?: ""
+                            if (text.isNotEmpty()) {
+                                when (currentTagName) {
+                                    "title" -> currentTitle += text
+                                    "desc" -> currentDesc = (currentDesc ?: "") + text
+                                    "category" -> currentCategory = text
+                                }
+                            }
                         }
-                        inProgramme = false
                     }
-                    currentTagName = ""
+    
+                    XmlPullParser.END_TAG -> {
+                        val tagName = parser.name?.lowercase() ?: ""
+                        if (tagName == "programme" && inProgramme) {
+                            if (currentChannelId.isNotEmpty() && currentTitle.isNotEmpty() && currentStart > 0) {
+                                programs.add(
+                                    EpgProgram(
+                                        channelId = currentChannelId,
+                                        title = currentTitle.trim(),
+                                        description = currentDesc?.trim()?.takeIf { it.isNotEmpty() },
+                                        startTime = currentStart,
+                                        endTime = if (currentStop > 0) currentStop else currentStart + 3600000,
+                                        category = currentCategory
+                                    )
+                                )
+                            }
+                            inProgramme = false
+                        }
+                        currentTagName = ""
+                    }
                 }
+                eventType = parser.next()
             }
-            eventType = parser.next()
+        } catch (e: Exception) {
+            // Malformed XML should not crash EPG loading or unit tests.
+            return emptyList()
         }
 
         return programs

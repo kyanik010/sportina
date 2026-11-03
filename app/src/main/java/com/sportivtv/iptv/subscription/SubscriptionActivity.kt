@@ -1,6 +1,7 @@
 package com.sportivtv.iptv.subscription
 
 import android.os.Bundle
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,33 +71,65 @@ class SubscriptionActivity : AppCompatActivity() {
     }
 
     private fun saveSubscription() {
-        val name = nameEdit.text.toString().trim()
-        val url = urlEdit.text.toString().trim()
-
-        if (name.isBlank()) {
-            nameEdit.error = getString(R.string.sub_name)
-            return
-        }
-        if (url.isBlank() || (!url.startsWith("http://") && !url.startsWith("https://"))) {
-            urlEdit.error = getString(R.string.error_invalid_url)
-            return
-        }
-
-        val epgUrl = epgUrlEdit.text.toString().trim().takeIf { it.isNotBlank() }
+        val name = nameEdit.text.toString().trim().ifBlank { getString(R.string.login_default_name) }
+        val server = urlEdit.text.toString().trim()
         val username = usernameEdit.text.toString().trim().takeIf { it.isNotBlank() }
         val password = passwordEdit.text.toString().takeIf { it.isNotBlank() }
+        val epgUrl = epgUrlEdit.text.toString().trim().takeIf { it.isNotBlank() }
 
-        subscriptionManager.addSubscription(name, url, epgUrl, username, password)
+        if (!server.startsWith("http://", true) && !server.startsWith("https://", true)) {
+            urlEdit.error = getString(R.string.login_url_invalid)
+            return
+        }
+        if ((username == null) != (password == null)) {
+            Toast.makeText(this, R.string.login_no_credentials, Toast.LENGTH_LONG).show()
+            return
+        }
 
-        // Clear form
-        nameEdit.text.clear()
-        urlEdit.text.clear()
-        epgUrlEdit.text.clear()
-        usernameEdit.text.clear()
-        passwordEdit.text.clear()
+        val playlistUrl = if (username != null && password != null &&
+            !server.contains("get.php", ignoreCase = true) &&
+            !server.contains("m3u", ignoreCase = true)) {
+            Uri.parse(server.trimEnd('/') + "/get.php").buildUpon()
+                .appendQueryParameter("username", username)
+                .appendQueryParameter("password", password)
+                .appendQueryParameter("type", "m3u_plus")
+                .appendQueryParameter("output", "ts")
+                .build().toString()
+        } else server
 
-        Toast.makeText(this, R.string.sub_save, Toast.LENGTH_SHORT).show()
-        refreshList()
+        saveButton.isEnabled = false
+        progressBar.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            try {
+                val result = subscriptionManager.testSubscription(playlistUrl)
+                if (!result.success) {
+                    Toast.makeText(
+                        this@SubscriptionActivity,
+                        getString(R.string.login_connection_failed) + " " + result.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@launch
+                }
+
+                subscriptionManager.addSubscription(name, playlistUrl, epgUrl, username, password)
+                nameEdit.text.clear()
+                urlEdit.text.clear()
+                epgUrlEdit.text.clear()
+                usernameEdit.text.clear()
+                passwordEdit.text.clear()
+                Toast.makeText(
+                    this@SubscriptionActivity,
+                    getString(R.string.login_connection_ok, result.channelCount),
+                    Toast.LENGTH_LONG
+                ).show()
+                refreshList()
+                setResult(RESULT_OK)
+                finish()
+            } finally {
+                progressBar.visibility = View.GONE
+                saveButton.isEnabled = true
+            }
+        }
     }
 
     private fun testSubscription(sub: Subscription) {
@@ -165,7 +198,7 @@ class SubscriptionAdapter(
             onDelete: (Subscription) -> Unit
         ) {
             nameText.text = sub.name
-            urlText.text = sub.playlistUrl
+            urlText.text = Uri.parse(sub.playlistUrl).host ?: itemView.context.getString(R.string.login_server_label)
             statusText.text = if (sub.isActive) itemView.context.getString(R.string.sub_active)
             else itemView.context.getString(R.string.sub_inactive)
 
