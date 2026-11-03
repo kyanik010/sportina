@@ -1,65 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@color/card_dark"
-    android:padding="@dimen/spacing_md"
-    android:layout_margin="@dimen/spacing_sm">
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@color/surface_dark"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/surface_light"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/sub_item_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/sub_item_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/sportiv_gold"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/sub_item_name"
-            android:layout_width="0dp"
+            android:id="@+id/sub_item_url"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="@color/text_primary_dark"
-            android:textSize="@dimen/text_md"
-            android:textStyle="bold" />
+            android:textColor="@color/text_secondary_dark"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:ellipsize="middle"
+            android:layout_marginTop="7dp" />
 
-        <TextView
-            android:id="@+id/sub_item_status"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/sportiv_green"
-            android:textSize="@dimen/text_sm" />
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="13dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sub_item_test"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:text="@string/sub_test"
+                android:textSize="12sp"
+                android:textColor="@color/sportiv_gold"
+                app:strokeColor="@color/sportiv_gold" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sub_item_delete"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:text="@string/sub_delete"
+                android:textSize="12sp"
+                android:textColor="@color/error_red"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/sub_item_url"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/text_secondary_dark"
-        android:textSize="@dimen/text_xs"
-        android:singleLine="true"
-        android:ellipsize="end"
-        android:layout_marginTop="@dimen/spacing_xs" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/spacing_sm">
-
-        <Button
-            android:id="@+id/sub_item_test"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sub_test"
-            android:textSize="@dimen/text_xs" />
-
-        <Button
-            android:id="@+id/sub_item_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sub_delete"
-            android:textColor="@color/error_red"
-            android:textSize="@dimen/text_xs"
-            android:layout_marginStart="@dimen/spacing_sm" />
-    </LinearLayout>
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>
