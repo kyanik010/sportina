@@ -84,6 +84,9 @@ class PlayerActivity : ComponentActivity() {
     private var currentChannelIndex = 0
     private var currentChannel: Channel? = null
     private var reconnectAttempts = 0
+    private var autoReconnectEnabled = true
+    private var externalAudioEnabled = false
+    private var bufferSizeMs = 30000
     private val maxReconnectAttempts = 5
     private val handler = Handler(Looper.getMainLooper())
 
@@ -130,6 +133,10 @@ class PlayerActivity : ComponentActivity() {
         val subManager = SubscriptionManager(this)
         channelRepo = ChannelRepository(subManager)
         favoritesManager = FavoritesManager(this)
+        val prefs = getSharedPreferences("sportiv_settings", MODE_PRIVATE)
+        autoReconnectEnabled = prefs.getBoolean("auto_reconnect", true)
+        externalAudioEnabled = prefs.getBoolean("external_audio", false)
+        bufferSizeMs = prefs.getInt("buffer_ms", 30000).coerceIn(5000, 60000)
         playerFactory = PlayerFactory(this)
         externalAudio = ExternalAudioManager(this)
     }
@@ -192,7 +199,7 @@ class PlayerActivity : ComponentActivity() {
     }
 
     private fun initPlayer() {
-        player = playerFactory.createPlayer()
+        player = playerFactory.createPlayer(bufferMs = bufferSizeMs)
         playerView.player = player
 
         player.addListener(object : Player.Listener {
@@ -353,6 +360,10 @@ class PlayerActivity : ComponentActivity() {
      * The primary video channel remains unchanged.
      */
     private fun showExternalAudioSourcePicker() {
+        if (!externalAudioEnabled) {
+            Toast.makeText(this, R.string.audio_enable_in_settings, Toast.LENGTH_LONG).show()
+            return
+        }
         val videoChannel = currentChannel ?: return
         val audioSources = channels.filter { it.id != videoChannel.id }
         if (audioSources.isEmpty()) {
