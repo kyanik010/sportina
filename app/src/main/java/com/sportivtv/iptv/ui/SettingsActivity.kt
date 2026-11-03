@@ -14,7 +14,6 @@ import com.sportivtv.iptv.R
  */
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var hwAccelSwitch: Switch
     private lateinit var autoReconnectSwitch: Switch
     private lateinit var externalAudioSwitch: Switch
     private lateinit var bufferSeekBar: SeekBar
@@ -27,7 +26,6 @@ class SettingsActivity : AppCompatActivity() {
 
         val prefs = getSharedPreferences("sportiv_settings", Context.MODE_PRIVATE)
 
-        hwAccelSwitch = findViewById(R.id.settings_hw_accel)
         autoReconnectSwitch = findViewById(R.id.settings_auto_reconnect)
         externalAudioSwitch = findViewById(R.id.settings_external_audio)
         bufferSeekBar = findViewById(R.id.settings_buffer_seekbar)
@@ -35,20 +33,15 @@ class SettingsActivity : AppCompatActivity() {
         aboutText = findViewById(R.id.settings_about_text)
 
         // Load saved settings
-        hwAccelSwitch.isChecked = prefs.getBoolean("hw_accel", true)
         autoReconnectSwitch.isChecked = prefs.getBoolean("auto_reconnect", true)
         externalAudioSwitch.isChecked = prefs.getBoolean("external_audio", false)
         val bufferSize = prefs.getInt("buffer_ms", 30000)
-        bufferSeekBar.progress = bufferSize / 1000
-        bufferText.text = "${bufferSize / 1000}ث"
+        bufferSeekBar.progress = (bufferSize / 1000 - 5).coerceIn(0, 55)
+        bufferText.text = "${(bufferSeekBar.progress + 5)}ث"
 
         aboutText.text = "${getString(R.string.about_description)}\n${getString(R.string.about_version, "1.0.0")}\n${getString(R.string.about_arch)}"
 
         // Save on change
-        hwAccelSwitch.setOnCheckedChangeListener { _, checked ->
-            prefs.edit().putBoolean("hw_accel", checked).apply()
-        }
-
         autoReconnectSwitch.setOnCheckedChangeListener { _, checked ->
             prefs.edit().putBoolean("auto_reconnect", checked).apply()
         }
@@ -59,8 +52,9 @@ class SettingsActivity : AppCompatActivity() {
 
         bufferSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val ms = progress * 1000
-                bufferText.text = "${progress}ث"
+                val seconds = progress + 5
+                val ms = seconds * 1000
+                bufferText.text = "${seconds}ث"
                 prefs.edit().putInt("buffer_ms", ms).apply()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
