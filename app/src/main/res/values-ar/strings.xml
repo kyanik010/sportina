@@ -95,6 +95,8 @@
     <string name="settings_interface">إعدادات الواجهة</string>
     <string name="settings_about">حول التطبيق</string>
     <string name="settings_developer">خيارات المطور</string>
+    <string name="settings_hw_accel_note">يتم اختيار مُرمّز الفيديو تلقائيًا بواسطة نظام Android.</string>
+    <string name="audio_enable_in_settings">فعّل الصوت الخارجي من الإعدادات أولًا.</string>
     <string name="settings_hw_accel">تسريع الأجهزة</string>
     <string name="settings_buffer_size">حجم الذاكرة المؤقتة</string>
     <string name="settings_auto_reconnect">إعادة الاتصال التلقائي</string>
