@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.ViewGroup
 import com.google.android.material.button.MaterialButton
 import com.sportivtv.iptv.subscription.SubscriptionActivity
+import androidx.core.content.ContextCompat
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.HeaderItem
@@ -86,8 +87,8 @@ class TvMainFragment : BrowseSupportFragment() {
                 minWidth = 280
                 minHeight = 64
                 textSize = 16f
-                setTextColor(resources.getColor(R.color.background_dark, null))
-                setBackgroundColor(resources.getColor(R.color.sportiv_gold, null))
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.background_dark))
+                backgroundTintList = android.content.res.ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.sportiv_gold))
             }
             return ViewHolder(button)
         }
