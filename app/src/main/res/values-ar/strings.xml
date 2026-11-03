@@ -87,6 +87,8 @@
     <string name="epg_next">التالي</string>
     <string name="epg_no_data">لا تتوفر بيانات دليل البرامج</string>
     <string name="epg_loading">جاري تحميل دليل البرامج…</string>
+    <string name="settings_title">إعدادات التطبيق</string>
+    <string name="settings_external_audio_note">ميزة تجريبية، ويعتمد عملها على دعم بث مزوّد الخدمة.</string>
     <string name="settings_player">إعدادات المشغل</string>
     <string name="settings_audio">إعدادات الصوت</string>
     <string name="settings_video">إعدادات الفيديو</string>
