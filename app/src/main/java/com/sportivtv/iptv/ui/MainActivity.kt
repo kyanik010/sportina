@@ -112,7 +112,10 @@ class MainActivity : AppCompatActivity() {
             ChannelCategory.INTERNATIONAL, ChannelCategory.NEWS, ChannelCategory.OTHER
         )
         categories.forEach { category ->
-            categoryTabs.addTab(categoryTabs.newTab().setText(category.arabicName).setTag(category))
+            val tab = categoryTabs.newTab()
+            tab.text = category.arabicName
+            tab.tag = category
+            categoryTabs.addTab(tab)
         }
         categoryTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -185,7 +188,7 @@ class MainActivity : AppCompatActivity() {
                 name = favorite.channelName,
                 logoUrl = favorite.channelLogo,
                 streamUrl = favorite.streamUrl,
-                category = ChannelCategory.categorize(favorite.channelName, null)
+                category = Channel.categorize(favorite.channelName, null)
             )
         }
         renderChannels()
