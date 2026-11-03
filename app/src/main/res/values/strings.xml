@@ -123,4 +123,8 @@
 
     <string name="tv_settings">TV Settings</string>
     <string name="tv_dpad_hint">Use directional buttons to navigate</string>
+    <string name="browse_brand">SPORTIV TV • LIVE</string>
+    <string name="browse_title">Live Channels</string>
+    <string name="browse_channel_count">%1$d channels</string>
+    <string name="channel_logo_description">Channel logo</string>
 </resources>
