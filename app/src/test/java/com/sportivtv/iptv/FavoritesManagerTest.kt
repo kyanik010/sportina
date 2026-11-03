@@ -65,6 +65,15 @@ class FavoritesManagerTest {
         assertFalse(favoritesManager.isFavorite("non_existent_id"))
     }
 
+
+    @Test
+    fun `favorite category survives persistence`() {
+        val sportsChannel = testChannel.copy(category = ChannelCategory.SPORTS)
+        favoritesManager.addFavorite(sportsChannel)
+        val saved = favoritesManager.getFavorites().single()
+        assertEquals(ChannelCategory.SPORTS, saved.category)
+    }
+
     @Test
     fun `add favorite twice does not duplicate`() {
         favoritesManager.addFavorite(testChannel)
