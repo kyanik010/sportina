@@ -95,7 +95,8 @@ data class Favorite(
     val channelName: String,
     val channelLogo: String? = null,
     val streamUrl: String,
-    val addedAt: Long = System.currentTimeMillis()
+    val addedAt: Long = System.currentTimeMillis(),
+    val category: ChannelCategory = ChannelCategory.OTHER
 )
 
 /**
