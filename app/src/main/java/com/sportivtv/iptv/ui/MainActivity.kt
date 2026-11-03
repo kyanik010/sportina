@@ -1,6 +1,5 @@
 package com.sportivtv.iptv.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -10,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -31,59 +29,52 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
 /**
- * Main Activity - Channel browsing interface.
- *
- * Features:
- * - Category tabs (Sports, Movies, News, etc.)
- * - Channel grid with logos
- * - Search bar
- * - Favorites view
- * - Bottom navigation (Channels, Favorites, Subscriptions, Settings)
- *
- * RTL layout, Arabic-first design.
+ * Arabic-first sports IPTV home. The screen never fabricates match fixtures:
+ * it presents the channels and provider data actually available to the user.
  */
 class MainActivity : AppCompatActivity() {
+
+    private enum class Destination { CHANNELS, FAVORITES }
 
     private lateinit var subscriptionManager: SubscriptionManager
     private lateinit var channelRepo: ChannelRepository
     private lateinit var favoritesManager: FavoritesManager
     private lateinit var channelSearch: ChannelSearch
-
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var searchEditText: EditText
     private lateinit var channelsRecyclerView: RecyclerView
-    private lateinit var loadingProgress: ProgressBar
+    private lateinit var loadingProgress: View
     private lateinit var emptyStateText: TextView
     private lateinit var emptyStateAction: com.google.android.material.button.MaterialButton
-    private lateinit var emptyStatePanel: android.view.View
+    private lateinit var emptyStatePanel: View
     private lateinit var channelCountText: TextView
+    private lateinit var sectionTitle: TextView
     private lateinit var channelAdapter: ChannelGridAdapter
+    private lateinit var categoryTabs: TabLayout
 
     private var allChannels: List<Channel> = emptyList()
-    private var currentCategory: ChannelCategory = ChannelCategory.ALL
-    private var currentSearchQuery: String = ""
+    private var currentCategory = ChannelCategory.ALL
+    private var currentSearchQuery = ""
+    private var destination = Destination.CHANNELS
     private var hasLoadedOnce = false
+    private var loadFailed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        initManagers()
-        initViews()
+        subscriptionManager = SubscriptionManager(this)
+        channelRepo = ChannelRepository(subscriptionManager)
+        favoritesManager = FavoritesManager(this)
+        channelSearch = ChannelSearch()
+        bindViews()
         if (subscriptionManager.getSubscriptions().isEmpty()) {
             startActivity(Intent(this, SubscriptionActivity::class.java))
         }
         loadChannels()
     }
 
-    private fun initManagers() {
-        subscriptionManager = SubscriptionManager(this)
-        channelRepo = ChannelRepository(subscriptionManager)
-        favoritesManager = FavoritesManager(this)
-        channelSearch = ChannelSearch()
-    }
-
-    private fun initViews() {
+    private fun bindViews() {
+        bottomNav = findViewById(R.id.bottom_nav)
         searchEditText = findViewById(R.id.search_edit)
         channelsRecyclerView = findViewById(R.id.channels_rv)
         loadingProgress = findViewById(R.id.loading_progress)
@@ -91,56 +82,63 @@ class MainActivity : AppCompatActivity() {
         emptyStateAction = findViewById(R.id.empty_state_action)
         emptyStatePanel = findViewById(R.id.empty_state_panel)
         channelCountText = findViewById(R.id.channel_count)
+        sectionTitle = findViewById(R.id.section_title)
+        categoryTabs = findViewById(R.id.category_tabs)
+
+        val columns = if (resources.getBoolean(R.bool.is_tv)) 5 else 2
+        channelsRecyclerView.layoutManager = GridLayoutManager(this, columns)
+        channelAdapter = ChannelGridAdapter(
+            favoritesManager,
+            onChannelClick = { PlayerActivity.start(this, it) },
+            onFavoriteChanged = { if (destination == Destination.FAVORITES) showFavorites() }
+        )
+        channelsRecyclerView.adapter = channelAdapter
+
         emptyStateAction.setOnClickListener {
             startActivity(Intent(this, SubscriptionActivity::class.java))
         }
-        bottomNav = findViewById(R.id.bottom_nav)
 
-        // Channel grid: 4 columns on phone, more on TV
-        val spanCount = if (resources.getBoolean(R.bool.is_tv)) 5 else 2
-        channelsRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
-        channelAdapter = ChannelGridAdapter(favoritesManager, { channel ->
-            PlayerActivity.start(this, channel)
-        })
-        channelsRecyclerView.adapter = channelAdapter
-
-        // Search
         searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                currentSearchQuery = s?.toString() ?: ""
-                applyFilters()
+                currentSearchQuery = s?.toString().orEmpty()
+                renderChannels()
             }
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) = Unit
         })
 
-        // Category tabs
-        val tabLayout = findViewById<TabLayout>(R.id.category_tabs)
         val categories = listOf(
-            ChannelCategory.ALL, ChannelCategory.SPORTS, ChannelCategory.NEWS,
-            ChannelCategory.MOVIES, ChannelCategory.ENTERTAINMENT, ChannelCategory.KIDS
+            ChannelCategory.ALL, ChannelCategory.SPORTS, ChannelCategory.ARABIC,
+            ChannelCategory.INTERNATIONAL, ChannelCategory.NEWS, ChannelCategory.OTHER
         )
         categories.forEach { category ->
-            val tab = tabLayout.newTab()
-            tab.text = category.arabicName
-            tab.tag = category
-            tabLayout.addTab(tab)
+            categoryTabs.addTab(categoryTabs.newTab().setText(category.arabicName).setTag(category))
         }
-
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        categoryTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                currentCategory = tab.tag as ChannelCategory
-                applyFilters()
+                currentCategory = tab.tag as? ChannelCategory ?: ChannelCategory.ALL
+                renderChannels()
             }
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
+            override fun onTabUnselected(tab: TabLayout.Tab) = Unit
+            override fun onTabReselected(tab: TabLayout.Tab) = Unit
         })
 
-        // Bottom navigation
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_channels -> { loadChannels(); true }
-                R.id.nav_favorites -> { showFavorites(); true }
+                R.id.nav_channels -> {
+                    destination = Destination.CHANNELS
+                    sectionTitle.setText(R.string.browse_title)
+                    if (hasLoadedOnce) renderChannels() else loadChannels()
+                    true
+                }
+                R.id.nav_favorites -> {
+                    destination = Destination.FAVORITES
+                    sectionTitle.setText(R.string.favorites_title)
+                    currentCategory = ChannelCategory.ALL
+                    categoryTabs.getTabAt(0)?.select()
+                    showFavorites()
+                    true
+                }
                 R.id.nav_subscriptions -> {
                     startActivity(Intent(this, SubscriptionActivity::class.java))
                     true
@@ -156,22 +154,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (hasLoadedOnce) loadChannels()
+        if (!hasLoadedOnce) return
+        if (destination == Destination.FAVORITES) showFavorites() else loadChannels()
     }
 
     private fun loadChannels() {
         loadingProgress.visibility = View.VISIBLE
-        emptyStateText.visibility = View.GONE
-
+        emptyStatePanel.visibility = View.GONE
         lifecycleScope.launch {
             try {
-                allChannels = channelRepo.loadChannels()
+                allChannels = channelRepo.loadChannels(forceRefresh = true)
+                loadFailed = false
                 hasLoadedOnce = true
-                applyFilters()
-            } catch (e: Exception) {
+                renderChannels()
+            } catch (_: Exception) {
+                loadFailed = true
                 hasLoadedOnce = true
-                emptyStateText.text = getString(R.string.error_network)
-                emptyStateText.visibility = View.VISIBLE
+                renderChannels()
             } finally {
                 loadingProgress.visibility = View.GONE
             }
@@ -179,27 +178,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showFavorites() {
-        val favorites = favoritesManager.getFavorites()
-        allChannels = favorites.map { fav ->
-            Channel(
-                id = fav.channelId,
-                name = fav.channelName,
-                logoUrl = fav.channelLogo,
-                streamUrl = fav.streamUrl
+        val source = allChannels.associateBy { it.id }
+        allChannels = favoritesManager.getFavorites().map { favorite ->
+            source[favorite.channelId] ?: Channel(
+                id = favorite.channelId,
+                name = favorite.channelName,
+                logoUrl = favorite.channelLogo,
+                streamUrl = favorite.streamUrl,
+                category = ChannelCategory.categorize(favorite.channelName, null)
             )
         }
-        applyFilters()
+        renderChannels()
     }
 
-    private fun applyFilters() {
-        var filtered = allChannels
+    private fun renderChannels() {
+        val base = if (destination == Destination.FAVORITES) {
+            val ids = favoritesManager.getFavorites().mapTo(hashSetOf()) { it.channelId }
+            allChannels.filter { it.id in ids }
+        } else allChannels
 
-        // Category filter
+        var filtered = base
         if (currentCategory != ChannelCategory.ALL) {
             filtered = filtered.filter { it.category == currentCategory }
         }
-
-        // Search filter
         if (currentSearchQuery.isNotBlank()) {
             filtered = channelSearch.search(filtered, currentSearchQuery)
         }
@@ -207,43 +208,38 @@ class MainActivity : AppCompatActivity() {
         channelAdapter.updateChannels(filtered)
         channelCountText.text = getString(R.string.browse_channel_count, filtered.size)
 
-        // Give first-time users a clear path to add a subscription.
-        val hasNoSubscriptions = subscriptionManager.getSubscriptions().isEmpty()
-        if (filtered.isEmpty()) {
-            emptyStateText.text = when {
-                currentSearchQuery.isNotBlank() -> getString(R.string.search_no_results)
-                hasNoSubscriptions -> getString(R.string.welcome_empty_description)
-                else -> getString(R.string.sub_no_channels_for_category)
-            }
-            emptyStatePanel.visibility = View.VISIBLE
-            emptyStateText.visibility = View.VISIBLE
-            emptyStateAction.visibility = if (currentSearchQuery.isNotBlank()) View.GONE else View.VISIBLE
-        } else {
-            emptyStatePanel.visibility = View.GONE
-            emptyStateText.visibility = View.GONE
-            emptyStateAction.visibility = View.GONE
+        val noSubscriptions = subscriptionManager.getSubscriptions().isEmpty()
+        val message = when {
+            loadFailed && destination == Destination.CHANNELS -> getString(R.string.error_network)
+            destination == Destination.FAVORITES && base.isEmpty() -> getString(R.string.fav_empty)
+            currentSearchQuery.isNotBlank() && filtered.isEmpty() -> getString(R.string.search_no_results)
+            filtered.isEmpty() && noSubscriptions -> getString(R.string.welcome_empty_description)
+            filtered.isEmpty() -> getString(R.string.sub_no_channels_for_category)
+            else -> null
         }
+        emptyStatePanel.visibility = if (message == null) View.GONE else View.VISIBLE
+        emptyStateText.text = message.orEmpty()
+        emptyStateAction.visibility = if (message != null && noSubscriptions &&
+            destination == Destination.CHANNELS && currentSearchQuery.isBlank()) View.VISIBLE else View.GONE
+        loadingProgress.visibility = View.GONE
     }
 }
 
-/**
- * Channel grid adapter.
- */
 class ChannelGridAdapter(
     private val favoritesManager: FavoritesManager,
-    private val onChannelClick: (Channel) -> Unit
+    private val onChannelClick: (Channel) -> Unit,
+    private val onFavoriteChanged: () -> Unit = {}
 ) : RecyclerView.Adapter<ChannelGridAdapter.ChannelGridViewHolder>() {
 
     private var channels: List<Channel> = emptyList()
 
     fun updateChannels(newChannels: List<Channel>) {
-        channels = newChannels
+        channels = newChannels.toList()
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelGridViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_channel_grid, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_channel_grid, parent, false)
         return ChannelGridViewHolder(view)
     }
 
@@ -251,49 +247,42 @@ class ChannelGridAdapter(
         holder.bind(channels[position])
     }
 
-    override fun getItemCount(): Int = channels.size
+    override fun getItemCount() = channels.size
 
     inner class ChannelGridViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameText: TextView = itemView.findViewById(R.id.grid_channel_name)
         private val logoImg: ImageView = itemView.findViewById(R.id.grid_channel_logo)
         private val categoryText: TextView = itemView.findViewById(R.id.grid_channel_category)
-        private val favoriteButton: android.widget.ImageButton = itemView.findViewById(R.id.grid_channel_favorite)
+        private val favoriteButton: android.widget.ImageButton =
+            itemView.findViewById(R.id.grid_channel_favorite)
 
         fun bind(channel: Channel) {
             nameText.text = channel.name
             categoryText.text = channel.category.arabicName
-
-            if (!channel.logoUrl.isNullOrBlank()) {
-                Glide.with(itemView.context)
-                    .load(channel.logoUrl)
-                    .placeholder(R.drawable.ic_channel_placeholder)
-                    .error(R.drawable.ic_channel_placeholder)
-                    .into(logoImg)
-            } else {
-                logoImg.setImageResource(R.drawable.ic_channel_placeholder)
-            }
-
-            favoriteButton.setImageResource(
-                if (favoritesManager.isFavorite(channel.id)) R.drawable.ic_star_filled
-                else R.drawable.ic_star_outline
-            )
-            favoriteButton.contentDescription = itemView.context.getString(
-                if (favoritesManager.isFavorite(channel.id)) R.string.fav_remove else R.string.fav_add
-            )
+            Glide.with(itemView).load(channel.logoUrl)
+                .placeholder(R.drawable.ic_channel_placeholder)
+                .error(R.drawable.ic_channel_placeholder)
+                .into(logoImg)
+            val favorite = favoritesManager.isFavorite(channel.id)
+            renderFavorite(favorite)
             favoriteButton.setOnClickListener {
-                val isFavorite = favoritesManager.toggleFavorite(channel)
-                favoriteButton.setImageResource(
-                    if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline
-                )
-                favoriteButton.contentDescription = itemView.context.getString(
-                    if (isFavorite) R.string.fav_remove else R.string.fav_add
-                )
+                renderFavorite(favoritesManager.toggleFavorite(channel))
+                onFavoriteChanged()
             }
             itemView.setOnClickListener { onChannelClick(channel) }
-            itemView.setOnFocusChangeListener { view, hasFocus ->
-                view.isSelected = hasFocus
-                view.isActivated = hasFocus
+            itemView.setOnFocusChangeListener { view, focused ->
+                view.isSelected = focused
+                view.isActivated = focused
             }
+        }
+
+        private fun renderFavorite(favorite: Boolean) {
+            favoriteButton.setImageResource(
+                if (favorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline
+            )
+            favoriteButton.contentDescription = itemView.context.getString(
+                if (favorite) R.string.fav_remove else R.string.fav_add
+            )
         }
     }
 }

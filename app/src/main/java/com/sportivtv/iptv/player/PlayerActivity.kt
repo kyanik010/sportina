@@ -31,34 +31,12 @@ import com.sportivtv.iptv.subscription.SubscriptionManager
 import com.sportivtv.iptv.data.ChannelRepository
 import kotlinx.coroutines.launch
 
-/**
- * Player Activity - Advanced IPTV Player
- *
- * Features (Phase 4):
- * - Channel switching (next/prev via D-pad or buttons)
- * - Playback controls (play/pause)
- * - In-player channel list (side panel)
- * - Reconnection logic (auto-retry with exponential backoff)
- * - Error handling (user-visible error messages)
- * - Watch state persistence (resume last watched channel)
- *
- * Features (Phase 5):
- * - External audio toggle
- * - Manual audio sync offset control (SeekBar)
- * - External audio does NOT crash video if it fails
- *
- * Phase 3:
- * - Favorites toggle from player
- */
 class PlayerActivity : ComponentActivity() {
-
     private lateinit var player: ExoPlayer
     private lateinit var playerFactory: PlayerFactory
     private lateinit var channelRepo: ChannelRepository
     private lateinit var favoritesManager: FavoritesManager
     private lateinit var externalAudio: ExternalAudioManager
-
-    // UI elements
     private lateinit var playerView: androidx.media3.ui.PlayerView
     private lateinit var controlsOverlay: View
     private lateinit var channelListPanel: View
@@ -78,16 +56,12 @@ class PlayerActivity : ComponentActivity() {
     private lateinit var btnFavorite: ImageButton
     private lateinit var btnAudioSync: ImageButton
     private lateinit var btnReconnect: ImageButton
-
-    // State
     private var channels: List<Channel> = emptyList()
-    private var currentChannelIndex = 0
+    private var currentChannelIndex = -1
     private var currentChannel: Channel? = null
     private var reconnectAttempts = 0
     private val maxReconnectAttempts = 5
     private val handler = Handler(Looper.getMainLooper())
-
-    // Auto-hide controls
     private val controlsHideDelay = 5000L
     private val hideControlsRunnable = Runnable {
         controlsOverlay.visibility = View.GONE
@@ -116,10 +90,7 @@ class PlayerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-
-        // Keep screen on
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         initManagers()
         initViews()
         initPlayer()
@@ -153,16 +124,12 @@ class PlayerActivity : ComponentActivity() {
         btnFavorite = findViewById(R.id.btn_favorite)
         btnAudioSync = findViewById(R.id.btn_audio_sync)
         btnReconnect = findViewById(R.id.btn_reconnect)
-
-        // Channel list adapter
         channelListAdapter = ChannelListAdapter { channel ->
             switchToChannel(channel)
             hideChannelList()
         }
         channelListRecyclerView.layoutManager = LinearLayoutManager(this)
         channelListRecyclerView.adapter = channelListAdapter
-
-        // Button listeners
         btnNextChannel.setOnClickListener { switchToNextChannel() }
         btnPrevChannel.setOnClickListener { switchToPrevChannel() }
         btnChannelList.setOnClickListener { toggleChannelList() }
@@ -171,30 +138,24 @@ class PlayerActivity : ComponentActivity() {
         btnAudioSync.setOnLongClickListener { toggleAudioSync(); true }
         btnReconnect.setOnClickListener { reconnect() }
         errorRetryButton.setOnClickListener { reconnect() }
-
-        // Audio offset SeekBar: range -1000ms to +1000ms (mapped to 0-200)
-        audioOffsetSeekBar.max = 2000
-        audioOffsetSeekBar.progress = 1000 // center = 0ms offset
+        // Match the manager's supported +/-30 second offset range.
+        audioOffsetSeekBar.max = 600
+        audioOffsetSeekBar.progress = 300
         audioOffsetSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val offsetMs = progress.toLong() - 1000 // -1000 to +1000
+                val offsetMs = (progress - 300L) * 100L
                 audioOffsetText.text = "${offsetMs}ms"
                 externalAudio.setAudioOffset(offsetMs)
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
-
-        // Show/hide controls on player view click
-        playerView.setOnClickListener {
-            toggleControls()
-        }
+        playerView.setOnClickListener { toggleControls() }
     }
 
     private fun initPlayer() {
         player = playerFactory.createPlayer()
         playerView.player = player
-
         player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
                 when (state) {
@@ -205,293 +166,163 @@ class PlayerActivity : ComponentActivity() {
                     Player.STATE_READY -> {
                         loadingProgressBar.visibility = View.GONE
                         errorText.visibility = View.GONE
-                        reconnectAttempts = 0 // Reset on success
-                        showControls()
                     }
-                    Player.STATE_ENDED -> {
-                        // Live streams shouldn't end; try reconnect
-                        handleStreamEnd()
-                    }
-                    Player.STATE_IDLE -> {
-                        loadingProgressBar.visibility = View.GONE
-                    }
+                    Player.STATE_IDLE -> loadingProgressBar.visibility = View.GONE
                 }
             }
-
-            override fun onPlayerError(error: PlaybackException) {
-                handlePlayerError(error)
-            }
+            override fun onPlayerError(error: PlaybackException) { handlePlayerError(error) }
         })
     }
 
     private fun loadChannels() {
         lifecycleScope.launch {
-            channels = channelRepo.loadChannels()
+            channels = channelRepo.loadChannels(forceRefresh = true)
             channelListAdapter.updateChannels(channels)
-
-            // Get channel from intent
-            val channelId = intent.getStringExtra(EXTRA_CHANNEL_ID) ?: ""
-            val channelName = intent.getStringExtra(EXTRA_CHANNEL_NAME) ?: ""
-            val streamUrl = intent.getStringExtra(EXTRA_STREAM_URL) ?: ""
-
+            val channelId = intent.getStringExtra(EXTRA_CHANNEL_ID).orEmpty()
+            val channelName = intent.getStringExtra(EXTRA_CHANNEL_NAME).orEmpty()
+            val streamUrl = intent.getStringExtra(EXTRA_STREAM_URL).orEmpty()
             if (streamUrl.isNotBlank()) {
-                // Find index in channel list
-                currentChannelIndex = channels.indexOfFirst { it.id == channelId }
-                if (currentChannelIndex < 0) currentChannelIndex = 0
-
-                val channel = if (currentChannelIndex < channels.size) {
-                    channels[currentChannelIndex]
-                } else {
-                    Channel(id = channelId, name = channelName, streamUrl = streamUrl)
-                }
-
+                val match = channels.firstOrNull { it.id == channelId || it.streamUrl == streamUrl }
+                currentChannelIndex = match?.let { channels.indexOf(it) } ?: -1
+                val channel = match ?: Channel(
+                    id = channelId.ifBlank { streamUrl },
+                    name = channelName.ifBlank { getString(R.string.app_name) },
+                    logoUrl = intent.getStringExtra(EXTRA_CHANNEL_LOGO),
+                    streamUrl = streamUrl,
+                    epgChannelId = intent.getStringExtra(EXTRA_EPG_ID)
+                )
                 playChannel(channel)
             }
         }
     }
 
-    /**
-     * Play a channel.
-     */
     private fun playChannel(channel: Channel) {
         currentChannel = channel
         channelNameText.text = channel.name
         reconnectAttempts = 0
-
-        // Save watch state
         saveWatchState(channel)
-
-        // Stop external audio if running
-        if (externalAudio.isActive()) {
-            externalAudio.stop(player)
-        }
-
-        // Set media and prepare
+        if (externalAudio.isActive()) externalAudio.stop(player)
         player.setMediaItem(playerFactory.createMediaItem(channel.streamUrl))
         player.prepare()
         player.playWhenReady = true
-
-        // Load EPG for this channel
         loadEpgForChannel(channel)
-
-        // Update favorite button
         updateFavoriteButton(channel)
-
         showControls()
     }
 
-    /**
-     * Switch to a specific channel.
-     */
     private fun switchToChannel(channel: Channel) {
-        val index = channels.indexOfFirst { it.id == channel.id }
-        if (index >= 0) currentChannelIndex = index
+        currentChannelIndex = channels.indexOfFirst { it.id == channel.id || it.streamUrl == channel.streamUrl }
         playChannel(channel)
     }
 
-    /**
-     * Switch to next channel.
-     */
     private fun switchToNextChannel() {
         if (channels.isEmpty()) return
-        currentChannelIndex = (currentChannelIndex + 1) % channels.size
+        currentChannelIndex = if (currentChannelIndex < 0) 0 else (currentChannelIndex + 1) % channels.size
         playChannel(channels[currentChannelIndex])
     }
 
-    /**
-     * Switch to previous channel.
-     */
     private fun switchToPrevChannel() {
         if (channels.isEmpty()) return
-        currentChannelIndex = (currentChannelIndex - 1 + channels.size) % channels.size
+        currentChannelIndex = if (currentChannelIndex < 0) channels.lastIndex
+            else (currentChannelIndex - 1 + channels.size) % channels.size
         playChannel(channels[currentChannelIndex])
     }
 
-    /**
-     * Toggle the channel list side panel.
-     */
     private fun toggleChannelList() {
-        if (channelListPanel.visibility == View.VISIBLE) {
-            hideChannelList()
-        } else {
+        if (channelListPanel.visibility == View.VISIBLE) hideChannelList() else {
             channelListPanel.visibility = View.VISIBLE
-            // Scroll to current channel
-            if (currentChannelIndex < channelListAdapter.itemCount) {
+            if (currentChannelIndex >= 0 && currentChannelIndex < channelListAdapter.itemCount) {
                 channelListRecyclerView.scrollToPosition(currentChannelIndex)
             }
         }
         resetHideControlsTimer()
     }
 
-    private fun hideChannelList() {
-        channelListPanel.visibility = View.GONE
-    }
+    private fun hideChannelList() { channelListPanel.visibility = View.GONE }
 
-    /**
-     * Toggle favorite status of current channel.
-     */
     private fun toggleFavorite() {
         val channel = currentChannel ?: return
-        val isFav = favoritesManager.toggleFavorite(channel)
-        updateFavoriteButton(channel, isFav)
+        updateFavoriteButton(channel, favoritesManager.toggleFavorite(channel))
     }
 
     private fun updateFavoriteButton(channel: Channel, isFav: Boolean? = null) {
         val favorite = isFav ?: favoritesManager.isFavorite(channel.id)
-        btnFavorite.setImageResource(
-            if (favorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline
-        )
+        btnFavorite.setImageResource(if (favorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline)
     }
 
-    /**
-     * Select a different IPTV channel as an audio-only commentary source.
-     * The primary video channel remains unchanged.
-     */
     private fun showExternalAudioSourcePicker() {
         val videoChannel = currentChannel ?: return
-        val audioSources = channels.filter { it.id != videoChannel.id }
+        val audioSources = channels.filter { it.id != videoChannel.id && it.streamUrl != videoChannel.streamUrl }
         if (audioSources.isEmpty()) {
-            Toast.makeText(this, "لا توجد قنوات أخرى لاختيار الصوت منها", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.audio_no_other_channels, Toast.LENGTH_SHORT).show()
             return
         }
-
-        val options = arrayOf("إيقاف الصوت الخارجي") + audioSources.map { it.name }.toTypedArray()
+        val options = arrayOf(getString(R.string.audio_stop_external)) + audioSources.map { it.name }.toTypedArray()
         AlertDialog.Builder(this)
-            .setTitle("اختر مصدر الصوت الخارجي")
+            .setTitle(R.string.audio_choose_source)
             .setItems(options) { _, which ->
                 if (which == 0) {
                     externalAudio.stop(player)
-                    Toast.makeText(this, "تمت العودة إلى الصوت الأصلي", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.audio_original_restored, Toast.LENGTH_SHORT).show()
                 } else {
                     val source = audioSources[which - 1]
                     val accepted = externalAudio.start(source.streamUrl, player)
-                    val message = if (accepted) {
-                        "جارٍ الاتصال بمصدر الصوت: ${source.name}"
-                    } else {
-                        "تعذر بدء مصدر الصوت المحدد"
-                    }
-                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this,
+                        if (accepted) getString(R.string.audio_connecting, source.name)
+                        else getString(R.string.audio_start_failed),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
-            .setNegativeButton("إلغاء", null)
+            .setNegativeButton(R.string.cancel, null)
             .show()
         resetHideControlsTimer()
     }
 
-    /**
-     * Long-press the audio button to show the manual offset control.
-     */
     private fun toggleAudioSync() {
-        val visibility = audioOffsetSeekBar.visibility
-        if (visibility == View.VISIBLE) {
-            audioOffsetSeekBar.visibility = View.GONE
-            audioOffsetText.visibility = View.GONE
-        } else {
-            audioOffsetSeekBar.visibility = View.VISIBLE
-            audioOffsetText.visibility = View.VISIBLE
-        }
+        val visible = audioOffsetSeekBar.visibility == View.VISIBLE
+        audioOffsetSeekBar.visibility = if (visible) View.GONE else View.VISIBLE
+        audioOffsetText.visibility = if (visible) View.GONE else View.VISIBLE
         resetHideControlsTimer()
     }
 
-    /**
-     * Reconnect to current stream.
-     */
     private fun reconnect() {
         val channel = currentChannel ?: return
-        errorText.visibility = View.GONE
-        loadingProgressBar.visibility = View.VISIBLE
-        playChannel(channel)
-    }
-
-    /**
-     * Handle player errors with auto-reconnect.
-     */
-    private fun handlePlayerError(error: PlaybackException) {
-        loadingProgressBar.visibility = View.GONE
-
-        if (reconnectAttempts < maxReconnectAttempts) {
-            reconnectAttempts++
-            errorText.text = getString(R.string.player_error_reconnect)
+        if (reconnectAttempts >= maxReconnectAttempts) {
+            errorText.text = getString(R.string.player_error)
             errorText.visibility = View.VISIBLE
-
-            // Exponential backoff: 2s, 4s, 8s, 16s, 32s
-            val delay = (2000L * (1 shl (reconnectAttempts - 1)))
-            handler.postDelayed({
-                currentChannel?.let { playChannel(it) }
-            }, delay)
-        } else {
-            errorText.text = "${getString(R.string.player_error)}: ${error.errorCodeName}"
-            errorText.visibility = View.VISIBLE
-            errorRetryButton.visibility = View.VISIBLE
-        }
-    }
-
-    /**
-     * Handle stream end (live streams shouldn't end normally).
-     */
-    private fun handleStreamEnd() {
-        if (reconnectAttempts < maxReconnectAttempts) {
-            reconnectAttempts++
-            handler.postDelayed({
-                currentChannel?.let { playChannel(it) }
-            }, 2000)
-        }
-    }
-
-    /**
-     * Load EPG data for current channel.
-     */
-    private fun loadEpgForChannel(channel: Channel) {
-        if (channel.epgChannelId.isNullOrBlank()) {
-            epgNowText.text = getString(R.string.epg_no_data)
-            epgNextText.text = ""
             return
         }
+        reconnectAttempts++
+        player.stop()
+        player.setMediaItem(playerFactory.createMediaItem(channel.streamUrl))
+        player.prepare()
+        player.playWhenReady = true
+    }
 
-        epgNowText.text = getString(R.string.epg_loading)
-
-        lifecycleScope.launch {
-            try {
-                val epgManager = com.sportivtv.iptv.epg.EpgManager(this@PlayerActivity,
-                    SubscriptionManager(this@PlayerActivity))
-                val (current, next) = epgManager.getCurrentAndNext(channel.epgChannelId)
-                epgNowText.text = current?.title ?: getString(R.string.epg_no_data)
-                epgNextText.text = next?.title?.let { "${getString(R.string.epg_next)}: $it" } ?: ""
-            } catch (e: Exception) {
-                epgNowText.text = getString(R.string.epg_no_data)
-                epgNextText.text = ""
-            }
+    private fun handlePlayerError(error: PlaybackException) {
+        loadingProgressBar.visibility = View.GONE
+        errorText.text = getString(R.string.player_error_reconnect)
+        errorText.visibility = View.VISIBLE
+        if (reconnectAttempts < maxReconnectAttempts) {
+            handler.postDelayed({ reconnect() }, 1500L * reconnectAttempts.coerceAtLeast(1))
         }
     }
 
-    /**
-     * Save watch state for resume.
-     */
     private fun saveWatchState(channel: Channel) {
-        val prefs = getSharedPreferences("sportiv_watch_state", Context.MODE_PRIVATE)
-        prefs.edit()
-            .putString("last_channel_id", channel.id)
-            .putString("last_channel_name", channel.name)
-            .putString("last_stream_url", channel.streamUrl)
+        getSharedPreferences("sportiv_watch_state", MODE_PRIVATE).edit()
+            .putString("channel_id", channel.id)
+            .putString("channel_name", channel.name)
             .putLong("last_watched_at", System.currentTimeMillis())
             .apply()
     }
 
-    /**
-     * Get last watched channel (for resume).
-     */
-    private fun getLastWatchedChannel(): WatchState? {
-        val prefs = getSharedPreferences("sportiv_watch_state", Context.MODE_PRIVATE)
-        val channelId = prefs.getString("last_channel_id", null) ?: return null
-        val channelName = prefs.getString("last_channel_name", "") ?: ""
-        val streamUrl = prefs.getString("last_stream_url", "") ?: ""
-        val watchedAt = prefs.getLong("last_watched_at", 0)
-        return WatchState(channelId, channelName, 0, watchedAt)
+    private fun loadEpgForChannel(channel: Channel) {
+        epgNowText.text = getString(R.string.epg_no_data)
+        epgNextText.text = ""
     }
 
-    /**
-     * Controls visibility management.
-     */
     private fun showControls() {
         controlsOverlay.visibility = View.VISIBLE
         resetHideControlsTimer()
@@ -501,9 +332,7 @@ class PlayerActivity : ComponentActivity() {
         if (controlsOverlay.visibility == View.VISIBLE) {
             controlsOverlay.visibility = View.GONE
             hideChannelList()
-        } else {
-            showControls()
-        }
+        } else showControls()
     }
 
     private fun resetHideControlsTimer() {
@@ -511,60 +340,29 @@ class PlayerActivity : ComponentActivity() {
         handler.postDelayed(hideControlsRunnable, controlsHideDelay)
     }
 
-    /**
-     * D-pad / key event handling for Android TV.
-     */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
-            KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                if (controlsOverlay.visibility == View.VISIBLE) {
-                    // Navigate in controls
-                } else {
-                    switchToNextChannel()
-                    return true
-                }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> if (controlsOverlay.visibility != View.VISIBLE) {
+                switchToNextChannel(); return true
             }
-            KeyEvent.KEYCODE_DPAD_LEFT -> {
-                if (controlsOverlay.visibility == View.VISIBLE) {
-                    // Navigate in controls
-                } else {
-                    switchToPrevChannel()
-                    return true
-                }
+            KeyEvent.KEYCODE_DPAD_LEFT -> if (controlsOverlay.visibility != View.VISIBLE) {
+                switchToPrevChannel(); return true
             }
-            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
-                showControls()
-                return true
-            }
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> showControls()
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
-                toggleControls()
-                return true
+                if (controlsOverlay.visibility != View.VISIBLE) toggleControls()
             }
-            KeyEvent.KEYCODE_CHANNEL_UP -> {
-                switchToNextChannel()
-                return true
-            }
-            KeyEvent.KEYCODE_CHANNEL_DOWN -> {
-                switchToPrevChannel()
-                return true
-            }
-            KeyEvent.KEYCODE_MEDIA_PLAY -> {
-                player.play()
-                return true
-            }
-            KeyEvent.KEYCODE_MEDIA_PAUSE -> {
-                player.pause()
-                return true
-            }
-            KeyEvent.KEYCODE_MEDIA_STOP -> {
-                finish()
-                return true
-            }
+            KeyEvent.KEYCODE_CHANNEL_UP -> { switchToNextChannel(); return true }
+            KeyEvent.KEYCODE_CHANNEL_DOWN -> { switchToPrevChannel(); return true }
+            KeyEvent.KEYCODE_MEDIA_PLAY -> { player.play(); return true }
+            KeyEvent.KEYCODE_MEDIA_PAUSE -> { player.pause(); return true }
+            KeyEvent.KEYCODE_MEDIA_STOP -> { finish(); return true }
         }
         return super.onKeyDown(keyCode, event)
     }
 
     override fun onDestroy() {
+        handler.removeCallbacksAndMessages(null)
         externalAudio.release()
         player.release()
         super.onDestroy()

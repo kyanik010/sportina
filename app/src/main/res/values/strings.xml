@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SportivTV</string>
-
     <string name="nav_channels">Channels</string>
     <string name="nav_favorites">Favorites</string>
     <string name="nav_search">Search</string>
     <string name="nav_subscriptions">Subscriptions</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_epg">TV Guide</string>
-
     <string name="category_all">All</string>
     <string name="category_sports">Sports</string>
     <string name="category_movies">Movies</string>
@@ -19,13 +17,12 @@
     <string name="category_music">Music</string>
     <string name="category_arabic">Arabic</string>
     <string name="category_international">International</string>
-
     <string name="player_play">Play</string>
     <string name="player_pause">Pause</string>
     <string name="player_channels_list">Channel List</string>
     <string name="player_next_channel">Next Channel</string>
     <string name="player_prev_channel">Previous Channel</string>
-    <string name="player_audio_sync">Audio Sync</string>
+    <string name="player_audio_sync">External Audio</string>
     <string name="player_audio_offset">Audio Offset (ms)</string>
     <string name="player_reconnect">Reconnect</string>
     <string name="player_loading">Loading…</string>
@@ -33,7 +30,6 @@
     <string name="player_error_reconnect">Cannot play channel. Retrying…</string>
     <string name="player_quality">Stream Quality</string>
     <string name="player_ratio">Aspect Ratio</string>
-
     <string name="sub_add">Add Subscription</string>
     <string name="sub_name">Subscription Name</string>
     <string name="sub_url">Playlist URL (M3U/M3U8)</string>
@@ -51,13 +47,11 @@
     <string name="sub_loading">Loading channels…</string>
     <string name="sub_channels_loaded">Loaded %1$d channels</string>
     <string name="sub_no_subscriptions">No subscriptions. Add one to get started.</string>
-
     <string name="welcome_title">Welcome to SportivTV</string>
-    <string name="welcome_empty_description">Add your IPTV subscription to get started. Your channels and categories will appear here.</string>
+    <string name="welcome_empty_description">Add an IPTV subscription to see your channels here.</string>
     <string name="welcome_add_subscription">Add IPTV Subscription</string>
-    <string name="welcome_supported_formats">Supports M3U playlists and available subscription credentials</string>
+    <string name="welcome_supported_formats">M3U and Xtream-compatible subscriptions</string>
     <string name="sub_no_channels_for_category">No channels in this category. Try another category.</string>
-
     <string name="login_title">Connect your subscription</string>
     <string name="login_subtitle">Enter your provider details to start watching live channels.</string>
     <string name="login_credentials_title">Subscription details</string>
@@ -78,16 +72,21 @@
     <string name="login_no_credentials">Enter both username and password, or leave both blank for M3U.</string>
     <string name="search_hint">Search channels…</string>
     <string name="search_no_results">No results</string>
-
     <string name="fav_add">Add to Favorites</string>
     <string name="fav_remove">Remove from Favorites</string>
-    <string name="fav_empty">No favorite channels</string>
-
+    <string name="fav_empty">No favorite channels yet</string>
+    <string name="fav_added_toast">Added to favorites</string>
+    <string name="fav_removed_toast">Removed from favorites</string>
+    <string name="favorites_title">Favorites</string>
+    <string name="channels_section">Your channels</string>
+    <string name="live_badge">LIVE</string>
+    <string name="hero_kicker">YOUR SPORTS • YOUR CHANNELS</string>
+    <string name="hero_title">Every match starts here</string>
+    <string name="hero_subtitle">Live sports channels, gathered in one place</string>
     <string name="epg_now">Now</string>
     <string name="epg_next">Next</string>
     <string name="epg_no_data">No EPG data available</string>
     <string name="epg_loading">Loading TV guide…</string>
-
     <string name="settings_player">Player Settings</string>
     <string name="settings_audio">Audio Settings</string>
     <string name="settings_video">Video Settings</string>
@@ -102,29 +101,31 @@
     <string name="settings_theme">Theme</string>
     <string name="settings_language">Language</string>
     <string name="settings_clear_cache">Clear Cache</string>
-
     <string name="error_no_internet">No internet connection</string>
     <string name="error_stream_failed">Stream loading failed</string>
     <string name="error_invalid_url">Invalid URL</string>
     <string name="error_empty_playlist">Empty playlist</string>
     <string name="error_network">Network error</string>
     <string name="error_unknown">Unknown error</string>
-
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="retry">Retry</string>
     <string name="loading">Loading…</string>
     <string name="empty">Empty</string>
     <string name="version">Version %1$s</string>
-
-    <string name="about_description">Premium Arabic Sports IPTV app for Android TV and Phones</string>
+    <string name="about_description">Premium Arabic sports IPTV app for Android TV and Phones</string>
     <string name="about_version">Version: %1$s</string>
     <string name="about_arch">Architecture: ARM64</string>
-
     <string name="tv_settings">TV Settings</string>
     <string name="tv_dpad_hint">Use directional buttons to navigate</string>
     <string name="browse_brand">SPORTIV TV • LIVE</string>
     <string name="browse_title">Live Channels</string>
     <string name="browse_channel_count">%1$d channels</string>
     <string name="channel_logo_description">Channel logo</string>
+    <string name="audio_no_other_channels">No other channels are available as an audio source.</string>
+    <string name="audio_stop_external">Stop external audio</string>
+    <string name="audio_original_restored">Original channel audio restored</string>
+    <string name="audio_choose_source">Choose external audio source</string>
+    <string name="audio_connecting">Connecting to %1$s audio…</string>
+    <string name="audio_start_failed">Could not start the selected audio source.</string>
 </resources>

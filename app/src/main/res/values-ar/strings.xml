@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App identity -->
     <string name="app_name">SportivTV</string>
-
-    <!-- Navigation -->
     <string name="nav_channels">القنوات</string>
     <string name="nav_favorites">المفضلة</string>
     <string name="nav_search">بحث</string>
     <string name="nav_subscriptions">الاشتراكات</string>
     <string name="nav_settings">الإعدادات</string>
     <string name="nav_epg">دليل البرامج</string>
-
-    <!-- Categories -->
     <string name="category_all">الكل</string>
     <string name="category_sports">رياضة</string>
     <string name="category_movies">أفلام</string>
@@ -22,14 +17,12 @@
     <string name="category_music">موسيقى</string>
     <string name="category_arabic">عربي</string>
     <string name="category_international">دولي</string>
-
-    <!-- Player -->
     <string name="player_play">تشغيل</string>
     <string name="player_pause">إيقاف مؤقت</string>
     <string name="player_channels_list">قائمة القنوات</string>
     <string name="player_next_channel">القناة التالية</string>
     <string name="player_prev_channel">القناة السابقة</string>
-    <string name="player_audio_sync">مزامنة الصوت</string>
+    <string name="player_audio_sync">الصوت الخارجي</string>
     <string name="player_audio_offset">إزاحة الصوت (مللي ثانية)</string>
     <string name="player_reconnect">إعادة الاتصال</string>
     <string name="player_loading">جاري التحميل…</string>
@@ -37,8 +30,6 @@
     <string name="player_error_reconnect">تعذر تشغيل القناة. جاري إعادة المحاولة…</string>
     <string name="player_quality">جودة البث</string>
     <string name="player_ratio">نسبة العرض</string>
-
-    <!-- Subscriptions -->
     <string name="sub_add">إضافة اشتراك</string>
     <string name="sub_name">اسم الاشتراك</string>
     <string name="sub_url">رابط قائمة التشغيل (M3U/M3U8)</string>
@@ -56,13 +47,11 @@
     <string name="sub_loading">جاري تحميل القنوات…</string>
     <string name="sub_channels_loaded">تم تحميل %1$d قناة</string>
     <string name="sub_no_subscriptions">لا توجد اشتراكات. أضف اشتراكًا للبدء.</string>
-
     <string name="welcome_title">أهلاً بك في SportivTV</string>
-    <string name="welcome_empty_description">ابدأ بإضافة اشتراك IPTV. ستظهر قنواتك وتصنيفاتك هنا بعد الإضافة.</string>
+    <string name="welcome_empty_description">أضف اشتراك IPTV لتظهر قنواتك هنا.</string>
     <string name="welcome_add_subscription">إضافة اشتراك IPTV</string>
-    <string name="welcome_supported_formats">يدعم قوائم M3U وبيانات الاشتراك المتاحة</string>
+    <string name="welcome_supported_formats">يدعم قوائم M3U واشتراكات Xtream المتوافقة</string>
     <string name="sub_no_channels_for_category">لا توجد قنوات في هذا التصنيف. جرّب تصنيفًا آخر.</string>
-
     <string name="login_title">اتصل باشتراكك</string>
     <string name="login_subtitle">أدخل بيانات مزوّد الخدمة للبدء بمشاهدة القنوات المباشرة.</string>
     <string name="login_credentials_title">بيانات الاشتراك</string>
@@ -81,22 +70,23 @@
     <string name="login_url_invalid">أدخل رابطًا صحيحًا يبدأ بـ http:// أو https://</string>
     <string name="login_default_name">اشتراكي</string>
     <string name="login_no_credentials">أدخل اسم المستخدم وكلمة المرور معًا، أو اتركهما فارغين لقائمة M3U.</string>
-    <!-- Search -->
     <string name="search_hint">ابحث عن قناة…</string>
     <string name="search_no_results">لا توجد نتائج</string>
-
-    <!-- Favorites -->
     <string name="fav_add">إضافة إلى المفضلة</string>
     <string name="fav_remove">إزالة من المفضلة</string>
-    <string name="fav_empty">لا توجد قنوات مفضلة</string>
-
-    <!-- EPG -->
+    <string name="fav_empty">لا توجد قنوات في المفضلة بعد</string>
+    <string name="fav_added_toast">أُضيفت إلى المفضلة</string>
+    <string name="fav_removed_toast">أُزيلت من المفضلة</string>
+    <string name="favorites_title">القنوات المفضلة</string>
+    <string name="channels_section">قنواتك</string>
+    <string name="live_badge">مباشر</string>
+    <string name="hero_kicker">رياضتك • قنواتك</string>
+    <string name="hero_title">كل المباريات تبدأ من هنا</string>
+    <string name="hero_subtitle">قنواتك الرياضية المباشرة في مكان واحد</string>
     <string name="epg_now">الآن</string>
     <string name="epg_next">التالي</string>
     <string name="epg_no_data">لا تتوفر بيانات دليل البرامج</string>
     <string name="epg_loading">جاري تحميل دليل البرامج…</string>
-
-    <!-- Settings -->
     <string name="settings_player">إعدادات المشغل</string>
     <string name="settings_audio">إعدادات الصوت</string>
     <string name="settings_video">إعدادات الفيديو</string>
@@ -106,38 +96,36 @@
     <string name="settings_hw_accel">تسريع الأجهزة</string>
     <string name="settings_buffer_size">حجم الذاكرة المؤقتة</string>
     <string name="settings_auto_reconnect">إعادة الاتصال التلقائي</string>
-    <string name="settings_external_audio">الصوت الخارجي التجريبي</string>
+    <string name="settings_external_audio">الصوت الخارجي (تجريبي)</string>
     <string name="settings_audio_offset_default">إزاحة الصوت الافتراضية</string>
     <string name="settings_theme">السمة</string>
     <string name="settings_language">اللغة</string>
     <string name="settings_clear_cache">مسح الذاكرة المؤقتة</string>
-
-    <!-- Errors -->
     <string name="error_no_internet">لا يوجد اتصال بالإنترنت</string>
     <string name="error_stream_failed">فشل تحميل البث</string>
     <string name="error_invalid_url">رابط غير صالح</string>
     <string name="error_empty_playlist">قائمة تشغيل فارغة</string>
     <string name="error_network">خطأ في الشبكة</string>
     <string name="error_unknown">خطأ غير معروف</string>
-
-    <!-- General -->
     <string name="ok">موافق</string>
     <string name="cancel">إلغاء</string>
     <string name="retry">إعادة المحاولة</string>
     <string name="loading">جاري التحميل…</string>
     <string name="empty">فارغ</string>
     <string name="version">الإصدار %1$s</string>
-
-    <!-- About -->
     <string name="about_description">تطبيق IPTV رياضي عربي فاخر لـ Android TV والهواتف</string>
     <string name="about_version">الإصدار: %1$s</string>
     <string name="about_arch">المعمارية: ARM64</string>
-
-    <!-- TV-specific -->
     <string name="tv_settings">إعدادات TV</string>
     <string name="tv_dpad_hint">استخدم أزرار الاتجاهات للتنقل</string>
     <string name="browse_brand">SPORTIV TV • LIVE</string>
     <string name="browse_title">القنوات المباشرة</string>
     <string name="browse_channel_count">%1$d قناة</string>
     <string name="channel_logo_description">شعار القناة</string>
+    <string name="audio_no_other_channels">لا توجد قنوات أخرى لاختيار مصدر صوت منها.</string>
+    <string name="audio_stop_external">إيقاف الصوت الخارجي</string>
+    <string name="audio_original_restored">تمت العودة إلى صوت القناة الأصلية</string>
+    <string name="audio_choose_source">اختر مصدر الصوت الخارجي</string>
+    <string name="audio_connecting">جارٍ الاتصال بصوت: %1$s</string>
+    <string name="audio_start_failed">تعذر بدء مصدر الصوت المحدد.</string>
 </resources>
