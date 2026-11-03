@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var emptyStateText: TextView
     private lateinit var emptyStateAction: com.google.android.material.button.MaterialButton
     private lateinit var emptyStatePanel: android.view.View
+    private lateinit var channelCountText: TextView
     private lateinit var channelAdapter: ChannelGridAdapter
 
     private var allChannels: List<Channel> = emptyList()
@@ -89,17 +90,18 @@ class MainActivity : AppCompatActivity() {
         emptyStateText = findViewById(R.id.empty_state_text)
         emptyStateAction = findViewById(R.id.empty_state_action)
         emptyStatePanel = findViewById(R.id.empty_state_panel)
+        channelCountText = findViewById(R.id.channel_count)
         emptyStateAction.setOnClickListener {
             startActivity(Intent(this, SubscriptionActivity::class.java))
         }
         bottomNav = findViewById(R.id.bottom_nav)
 
         // Channel grid: 4 columns on phone, more on TV
-        val spanCount = if (resources.getBoolean(R.bool.is_tv)) 6 else 4
+        val spanCount = if (resources.getBoolean(R.bool.is_tv)) 5 else 2
         channelsRecyclerView.layoutManager = GridLayoutManager(this, spanCount)
-        channelAdapter = ChannelGridAdapter { channel ->
+        channelAdapter = ChannelGridAdapter(favoritesManager, { channel ->
             PlayerActivity.start(this, channel)
-        }
+        })
         channelsRecyclerView.adapter = channelAdapter
 
         // Search
@@ -203,6 +205,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         channelAdapter.updateChannels(filtered)
+        channelCountText.text = getString(R.string.browse_channel_count, filtered.size)
 
         // Give first-time users a clear path to add a subscription.
         val hasNoSubscriptions = subscriptionManager.getSubscriptions().isEmpty()
@@ -227,6 +230,7 @@ class MainActivity : AppCompatActivity() {
  * Channel grid adapter.
  */
 class ChannelGridAdapter(
+    private val favoritesManager: FavoritesManager,
     private val onChannelClick: (Channel) -> Unit
 ) : RecyclerView.Adapter<ChannelGridAdapter.ChannelGridViewHolder>() {
 
@@ -253,6 +257,7 @@ class ChannelGridAdapter(
         private val nameText: TextView = itemView.findViewById(R.id.grid_channel_name)
         private val logoImg: ImageView = itemView.findViewById(R.id.grid_channel_logo)
         private val categoryText: TextView = itemView.findViewById(R.id.grid_channel_category)
+        private val favoriteButton: android.widget.ImageButton = itemView.findViewById(R.id.grid_channel_favorite)
 
         fun bind(channel: Channel) {
             nameText.text = channel.name
@@ -268,7 +273,27 @@ class ChannelGridAdapter(
                 logoImg.setImageResource(R.drawable.ic_channel_placeholder)
             }
 
+            favoriteButton.setImageResource(
+                if (favoritesManager.isFavorite(channel.id)) R.drawable.ic_star_filled
+                else R.drawable.ic_star_outline
+            )
+            favoriteButton.contentDescription = itemView.context.getString(
+                if (favoritesManager.isFavorite(channel.id)) R.string.fav_remove else R.string.fav_add
+            )
+            favoriteButton.setOnClickListener {
+                val isFavorite = favoritesManager.toggleFavorite(channel)
+                favoriteButton.setImageResource(
+                    if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline
+                )
+                favoriteButton.contentDescription = itemView.context.getString(
+                    if (isFavorite) R.string.fav_remove else R.string.fav_add
+                )
+            }
             itemView.setOnClickListener { onChannelClick(channel) }
+            itemView.setOnFocusChangeListener { view, hasFocus ->
+                view.isSelected = hasFocus
+                view.isActivated = hasFocus
+            }
         }
     }
 }
