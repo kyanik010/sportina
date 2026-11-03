@@ -34,7 +34,10 @@ class FavoritesManager(context: Context) {
                     channelName = obj.getString("channelName"),
                     channelLogo = obj.optString("channelLogo", null),
                     streamUrl = obj.getString("streamUrl"),
-                    addedAt = obj.getLong("addedAt")
+                    addedAt = obj.getLong("addedAt"),
+                    category = runCatching {
+                        ChannelCategory.valueOf(obj.optString("category", "OTHER"))
+                    }.getOrDefault(ChannelCategory.OTHER)
                 )
             }
         } catch (e: Exception) {
@@ -55,7 +58,8 @@ class FavoritesManager(context: Context) {
                 channelId = channel.id,
                 channelName = channel.name,
                 channelLogo = channel.logoUrl,
-                streamUrl = channel.streamUrl
+                streamUrl = channel.streamUrl,
+                category = channel.category
             )
         )
         saveFavorites(favorites)
@@ -101,6 +105,7 @@ class FavoritesManager(context: Context) {
             obj.put("channelLogo", fav.channelLogo ?: JSONObject.NULL)
             obj.put("streamUrl", fav.streamUrl)
             obj.put("addedAt", fav.addedAt)
+            obj.put("category", fav.category.name)
             array.put(obj)
         }
         prefs.edit().putString(KEY_FAVORITES, array.toString()).apply()
