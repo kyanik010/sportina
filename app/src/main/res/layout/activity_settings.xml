@@ -64,12 +64,12 @@
                         android:text="@string/settings_hw_accel"
                         android:textColor="@color/text_primary_dark"
                         android:textSize="14sp" />
-                    <Switch
-                        android:id="@+id/settings_hw_accel"
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:thumbTint="@color/sportiv_gold"
-                        android:trackTint="@color/sportiv_gold_dark" />
+                        android:text="@string/settings_hw_accel_note"
+                        android:textColor="@color/text_secondary_dark"
+                        android:textSize="12sp" />
                 </LinearLayout>
                 <View
                     android:layout_width="match_parent"
@@ -110,8 +110,8 @@
                     android:id="@+id/settings_buffer_seekbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:max="60"
-                    android:progress="30"
+                    android:max="55"
+                    android:progress="25"
                     android:progressTint="@color/sportiv_gold"
                     android:thumbTint="@color/sportiv_gold" />
                 <TextView
