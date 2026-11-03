@@ -1,6 +1,10 @@
 package com.sportivtv.iptv.tv
 
 import android.os.Bundle
+import android.content.Intent
+import android.view.ViewGroup
+import com.google.android.material.button.MaterialButton
+import com.sportivtv.iptv.subscription.SubscriptionActivity
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.HeaderItem
@@ -48,8 +52,9 @@ class TvMainFragment : BrowseSupportFragment() {
         rowsAdapter.clear()
 
         if (channels.isEmpty()) {
-            val header = HeaderItem(0, getString(R.string.sub_no_subscriptions))
-            val emptyAdapter = ArrayObjectAdapter(ChannelPresenter())
+            val header = HeaderItem(0, getString(R.string.welcome_title))
+            val emptyAdapter = ArrayObjectAdapter(SubscriptionActionPresenter())
+            emptyAdapter.add(getString(R.string.welcome_add_subscription))
             rowsAdapter.add(ListRow(header, emptyAdapter))
             return
         }
@@ -70,6 +75,33 @@ class TvMainFragment : BrowseSupportFragment() {
             categoryChannels.forEach { listAdapter.add(it) }
             rowsAdapter.add(ListRow(header, listAdapter))
             rowIndex++
+        }
+    }
+
+    private inner class SubscriptionActionPresenter : Presenter() {
+        override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
+            val button = MaterialButton(parent.context).apply {
+                isFocusable = true
+                isFocusableInTouchMode = true
+                minWidth = 280
+                minHeight = 64
+                textSize = 16f
+                setTextColor(resources.getColor(R.color.background_dark, null))
+                setBackgroundColor(resources.getColor(R.color.sportiv_gold, null))
+            }
+            return ViewHolder(button)
+        }
+
+        override fun onBindViewHolder(viewHolder: ViewHolder, item: Any?) {
+            val button = viewHolder.view as MaterialButton
+            button.text = item?.toString() ?: getString(R.string.welcome_add_subscription)
+            button.setOnClickListener {
+                startActivity(Intent(requireContext(), SubscriptionActivity::class.java))
+            }
+        }
+
+        override fun onUnbindViewHolder(viewHolder: ViewHolder) {
+            viewHolder.view.setOnClickListener(null)
         }
     }
 
