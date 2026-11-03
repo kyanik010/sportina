@@ -11,6 +11,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: sportina-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
