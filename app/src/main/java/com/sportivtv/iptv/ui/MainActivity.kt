@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
     private var allChannels: List<Channel> = emptyList()
     private var currentCategory: ChannelCategory = ChannelCategory.ALL
     private var currentSearchQuery: String = ""
+    private var hasLoadedOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +69,9 @@ class MainActivity : AppCompatActivity() {
 
         initManagers()
         initViews()
+        if (subscriptionManager.getSubscriptions().isEmpty()) {
+            startActivity(Intent(this, SubscriptionActivity::class.java))
+        }
         loadChannels()
     }
 
@@ -148,6 +152,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (hasLoadedOnce) loadChannels()
+    }
+
     private fun loadChannels() {
         loadingProgress.visibility = View.VISIBLE
         emptyStateText.visibility = View.GONE
@@ -155,8 +164,10 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 allChannels = channelRepo.loadChannels()
+                hasLoadedOnce = true
                 applyFilters()
             } catch (e: Exception) {
+                hasLoadedOnce = true
                 emptyStateText.text = getString(R.string.error_network)
                 emptyStateText.visibility = View.VISIBLE
             } finally {
