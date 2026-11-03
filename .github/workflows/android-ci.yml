@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - fix/initial-stability-arm64-audio
+      - fix/sportina-professional-experience
   pull_request:
     branches:
       - main
