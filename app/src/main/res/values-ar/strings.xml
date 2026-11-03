@@ -136,4 +136,8 @@
     <!-- TV-specific -->
     <string name="tv_settings">إعدادات TV</string>
     <string name="tv_dpad_hint">استخدم أزرار الاتجاهات للتنقل</string>
+    <string name="browse_brand">SPORTIV TV • LIVE</string>
+    <string name="browse_title">القنوات المباشرة</string>
+    <string name="browse_channel_count">%1$d قناة</string>
+    <string name="channel_logo_description">شعار القناة</string>
 </resources>
