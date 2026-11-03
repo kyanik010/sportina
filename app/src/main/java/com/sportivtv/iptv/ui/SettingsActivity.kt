@@ -37,7 +37,7 @@ class SettingsActivity : AppCompatActivity() {
         externalAudioSwitch.isChecked = prefs.getBoolean("external_audio", false)
         val bufferSize = prefs.getInt("buffer_ms", 30000)
         bufferSeekBar.progress = (bufferSize / 1000 - 5).coerceIn(0, 55)
-        bufferText.text = "${(bufferSeekBar.progress + 5)}ث"
+        bufferText.text = getString(R.string.buffer_seconds, bufferSeekBar.progress + 5)
 
         aboutText.text = "${getString(R.string.about_description)}\n${getString(R.string.about_version, "1.0.0")}\n${getString(R.string.about_arch)}"
 
@@ -54,7 +54,7 @@ class SettingsActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val seconds = progress + 5
                 val ms = seconds * 1000
-                bufferText.text = "${seconds}ث"
+                bufferText.text = getString(R.string.buffer_seconds, seconds)
                 prefs.edit().putInt("buffer_ms", ms).apply()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
