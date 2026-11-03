@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App configuration: force Arabic as default locale -->
+    <string name="locale_default">ar</string>
+
+    <!-- TV banner dimensions -->
+    <dimen name="tv_banner_width">320dp</dimen>
+    <dimen name="tv_banner_height">180dp</dimen>
+
+    <!-- Channel card -->
+    <dimen name="channel_card_width">180dp</dimen>
+    <dimen name="channel_card_height">120dp</dimen>
+    <dimen name="channel_logo_size">48dp</dimen>
+
+    <!-- Player -->
+    <dimen name="player_control_height">56dp</dimen>
+    <dimen name="player_channel_list_width">300dp</dimen>
+
+    <!-- Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="text_xs">12sp</dimen>
+    <dimen name="text_sm">14sp</dimen>
+    <dimen name="text_md">16sp</dimen>
+    <dimen name="text_lg">20sp</dimen>
+    <dimen name="text_xl">24sp</dimen>
+    <dimen name="text_xxl">32sp</dimen>
+</resources>
