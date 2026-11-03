@@ -95,6 +95,8 @@
     <string name="settings_interface">Interface Settings</string>
     <string name="settings_about">About</string>
     <string name="settings_developer">Developer Options</string>
+    <string name="settings_hw_accel_note">Decoder selection is managed automatically by Android.</string>
+    <string name="audio_enable_in_settings">Enable external audio in Settings first.</string>
     <string name="settings_hw_accel">Hardware Acceleration</string>
     <string name="settings_buffer_size">Buffer Size</string>
     <string name="settings_auto_reconnect">Auto Reconnect</string>
