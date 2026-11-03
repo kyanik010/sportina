@@ -68,7 +68,8 @@
                         android:id="@+id/settings_hw_accel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:buttonTint="@color/sportiv_gold" />
+                        android:thumbTint="@color/sportiv_gold"
+                        android:trackTint="@color/sportiv_gold_dark" />
                 </LinearLayout>
                 <View
                     android:layout_width="match_parent"
@@ -91,7 +92,8 @@
                         android:id="@+id/settings_auto_reconnect"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:buttonTint="@color/sportiv_gold" />
+                        android:thumbTint="@color/sportiv_gold"
+                        android:trackTint="@color/sportiv_gold_dark" />
                 </LinearLayout>
                 <View
                     android:layout_width="match_parent"
@@ -172,7 +174,8 @@
                         android:id="@+id/settings_external_audio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:buttonTint="@color/sportiv_gold" />
+                        android:thumbTint="@color/sportiv_gold"
+                        android:trackTint="@color/sportiv_gold_dark" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
